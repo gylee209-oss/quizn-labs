@@ -29,12 +29,42 @@
   <!-- 관리 콘텐츠 (Staff) -->
   <section class="admin-content" id="admin-content" hidden>
     <div class="admin-toolbar">
-      <div class="search"><i class="icon-zoom-in"></i><input type="text" id="user-search" placeholder="이름·소속으로 검색" autocomplete="off"></div>
+      <div class="search"><i class="icon-zoom-in"></i><input type="text" id="user-search" placeholder="닉네임·이메일로 검색" autocomplete="off"></div>
       <span class="admin-count" id="user-count"></span>
+      <button class="btn primary" id="add-user-btn">+ 사용자 추가</button>
     </div>
     <div class="admin-table" id="user-table"></div>
   </section>
 </main>
+
+<!-- 사용자 추가 모달 -->
+<div class="lab-modal-overlay" id="add-modal">
+  <div class="lab-modal" role="dialog" aria-modal="true" aria-labelledby="am-title">
+    <div class="lm-head"><h3 id="am-title">사용자 추가</h3><button class="lm-close" id="am-close" aria-label="닫기">×</button></div>
+    <div class="lm-body">
+      <div class="lm-field"><label for="am-nick">닉네임</label><input class="lm-input" type="text" id="am-nick" placeholder="닉네임" autocomplete="off"></div>
+      <div class="lm-field"><label for="am-email">이메일</label><input class="lm-input" type="email" id="am-email" placeholder="name@quizn.app" autocomplete="off"></div>
+      <div class="lm-field"><label for="am-role">역할</label>
+        <select class="lm-input" id="am-role"><option value="member">일반</option><option value="staff">운영</option></select>
+      </div>
+    </div>
+    <div class="lm-foot">
+      <button class="btn ghost" id="am-cancel">취소</button>
+      <button class="btn primary" id="am-submit">추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- 회원 삭제 확인 모달 -->
+<div class="lab-modal-overlay" id="confirm-modal">
+  <div class="lab-modal confirm-modal" role="dialog" aria-modal="true">
+    <p class="confirm-msg" id="confirm-msg">회원이 삭제됩니다. 삭제하시겠습니까?</p>
+    <div class="confirm-actions">
+      <button class="btn ghost" id="confirm-cancel">취소</button>
+      <button class="btn primary" id="confirm-ok">삭제</button>
+    </div>
+  </div>
+</div>
 
 <div id="footer-slot"></div>
 <div id="gate-slot"></div>
@@ -50,27 +80,33 @@
   const cell = (cls, text) => el('span', cls, text);
   const roleBadge = (role) => el('span', 'role-badge ' + role, ROLE_KO[role]);
 
+  function dispNick(u, myNick) { return (u.me && myNick) ? myNick : u.nick; }   // 본인은 QuizN 닉네임 따라감
+
   function renderUsers() {
     const q = searchEl.value.trim().toLowerCase();
-    const _acc = JSON.parse(localStorage.getItem('quizn_account') || 'null');   // QuizN 계정 닉네임
+    const _acc = JSON.parse(localStorage.getItem('quizn_account') || 'null');
     const myNick = _acc && _acc.nick ? _acc.nick : null;
     const list = USERS.filter(function (u) {
       if (!q) return true;
-      var hay = [u.name, u.org];
-      if (u.me && myNick) hay.push(myNick);   // 본인은 QuizN 닉네임으로도 검색
-      return hay.some(function (n) { return n.toLowerCase().includes(q); });
+      var hay = [dispNick(u, myNick), u.email];
+      return hay.some(function (n) { return (n || '').toLowerCase().includes(q); });
     });
     tableEl.replaceChildren();
     const head = el('div', 'ut-row ut-head');
-    head.append(cell('ut-user', '사용자'), cell('ut-org', '소속'), cell('ut-cur', '현재 역할'), cell('ut-chg', '역할 변경'));
+    head.append(cell('ut-user', '닉네임'), cell('ut-email', '이메일'), cell('ut-org', '소속'),
+                cell('ut-cur', '역할'), cell('ut-chg', '역할 변경'), cell('ut-del', '삭제'));
     tableEl.append(head);
     document.getElementById('user-count').textContent = '총 ' + USERS.length + '명';
+
     list.forEach(u => {
       const row = el('div', 'ut-row');
+      const name = dispNick(u, myNick);
+
       const uc = el('div', 'ut-user');
-      const dispName = (u.me && myNick) ? myNick : u.name;   // 본인 행은 QuizN 닉네임 + (나)
-      uc.append(el('span', 'ut-avatar', dispName.charAt(0)), el('span', 'ut-name', dispName + (u.me ? ' (나)' : '')));
+      uc.append(el('span', 'ut-avatar', name.charAt(0)), el('span', 'ut-name', name + (u.me ? ' (나)' : '')));
+
       const cc = el('div', 'ut-cur'); cc.append(roleBadge(u.role));
+
       const chg = el('div', 'ut-chg');
       const seg = el('div', 'role-seg');
       ['member', 'staff'].forEach(r => {
@@ -78,16 +114,66 @@
         if (u.me) b.disabled = true;
         else b.addEventListener('click', () => {
           u.role = r; renderUsers();
-          toast(strongNode(u.name), document.createTextNode(' 역할을 ' + ROLE_KO[r] + '(으)로 변경했어요'));
+          toast(strongNode(name), document.createTextNode(' 역할을 ' + ROLE_KO[r] + '(으)로 변경했어요'));
         });
         seg.append(b);
       });
       chg.append(seg);
-      if (u.me) chg.append(el('span', 'rs-note', '본인 권한은 변경할 수 없습니다'));
-      row.append(uc, cell('ut-org', u.org), cc, chg);
+
+      const del = el('div', 'ut-del');
+      const delBtn = el('button', 'ut-del-btn');
+      delBtn.title = '회원 삭제';
+      delBtn.append(icon('trash'));
+      if (u.me) { delBtn.disabled = true; delBtn.title = '본인은 삭제할 수 없습니다'; }
+      else delBtn.addEventListener('click', () => {
+        showConfirm('회원이 삭제됩니다. 삭제하시겠습니까?', () => {
+          const i = USERS.indexOf(u);
+          if (i > -1) USERS.splice(i, 1);
+          renderUsers();
+          toast(strongNode(name), document.createTextNode(' 회원을 삭제했어요'));
+        });
+      });
+      del.append(delBtn);
+
+      row.append(uc, cell('ut-email', u.email), cell('ut-org', u.org || '—'), cc, chg, del);
       tableEl.append(row);
     });
   }
+
+  /* ── 삭제 확인 모달 ── */
+  const confirmModal = document.getElementById('confirm-modal');
+  let _onConfirm = null;
+  function showConfirm(msg, onOk) {
+    document.getElementById('confirm-msg').textContent = msg;
+    _onConfirm = onOk;
+    confirmModal.classList.add('show');
+  }
+  function closeConfirm() { confirmModal.classList.remove('show'); _onConfirm = null; }
+  document.getElementById('confirm-cancel').addEventListener('click', closeConfirm);
+  document.getElementById('confirm-ok').addEventListener('click', () => { const f = _onConfirm; closeConfirm(); if (f) f(); });
+  confirmModal.addEventListener('click', e => { if (e.target === confirmModal) closeConfirm(); });
+
+  /* ── 사용자 추가 모달 ── */
+  const addModal = document.getElementById('add-modal');
+  const amNick = document.getElementById('am-nick');
+  const amEmail = document.getElementById('am-email');
+  const amRole = document.getElementById('am-role');
+  function openAdd() { amNick.value = ''; amEmail.value = ''; amRole.value = 'member'; addModal.classList.add('show'); amNick.focus(); }
+  function closeAdd() { addModal.classList.remove('show'); }
+  document.getElementById('add-user-btn').addEventListener('click', openAdd);
+  document.getElementById('am-close').addEventListener('click', closeAdd);
+  document.getElementById('am-cancel').addEventListener('click', closeAdd);
+  addModal.addEventListener('click', e => { if (e.target === addModal) closeAdd(); });
+  document.getElementById('am-submit').addEventListener('click', () => {
+    const nick = amNick.value.trim();
+    const email = amEmail.value.trim();
+    if (!nick) { amNick.focus(); toastText('닉네임을 입력해 주세요'); return; }
+    if (!email) { amEmail.focus(); toastText('이메일을 입력해 주세요'); return; }
+    USERS.push({ nick: nick, email: email, org: '', role: amRole.value });
+    closeAdd();
+    renderUsers();
+    toast(strongNode(nick), document.createTextNode(' 회원을 추가했어요'));
+  });
 
   function applyAccess(member) {
     const denied = document.getElementById('admin-denied');

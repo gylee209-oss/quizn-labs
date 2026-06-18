@@ -58,15 +58,15 @@ const MODELS = [
 
 const STATUS_KO = { beta: '베타', live: '정식', archived: '보관' };
 
-// 권한 관리용 사용자 더미 (Staff 전용 화면)
+// 권한 관리용 사용자 더미 (Staff 전용 화면) — 닉네임·이메일 기준, 소속은 빈칸
 const ROLE_KO = { guest: '비로그인', member: '일반', staff: '운영' };
 const USERS = [
-  { name: '서도영', org: '소프트앤', role: 'staff', me: true },
-  { name: '오세훈', org: '소프트앤', role: 'staff' },
-  { name: '김민서', org: '행복초등학교', role: 'member' },
-  { name: '이준호', org: '서울중학교', role: 'member' },
-  { name: '박지훈', org: '대한고등학교', role: 'member' },
-  { name: '정다은', org: '한빛중학교', role: 'member' }
+  { nick: '퀴잰용용', email: 'quizn_yong@quizn.app', org: '', role: 'staff', me: true },
+  { nick: '하늘다람쥐', email: 'sky.squirrel@quizn.app', org: '', role: 'staff' },
+  { nick: '민트초코', email: 'mint.choco@quizn.app', org: '', role: 'member' },
+  { nick: '구름빵', email: 'cloud.bread@quizn.app', org: '', role: 'member' },
+  { nick: '별헤는밤', email: 'starry.night@quizn.app', org: '', role: 'member' },
+  { nick: '코딩하는곰', email: 'coding.bear@quizn.app', org: '', role: 'member' }
 ];
 
 /* ── DOM 유틸 ─────────────────────────────────── */
@@ -172,7 +172,7 @@ function initChrome(onAuthChange) {
    주의: 정적 마크업 전용. 사용자 입력 등 동적 데이터를 이 문자열에 절대 보간하지 말 것(XSS). */
 function headerHTML() {
   const acc = (function () { try { return JSON.parse(localStorage.getItem('quizn_account')); } catch (e) { return null; } })();
-  const nick = acc && acc.nick ? acc.nick : '서도영';   // QuizN 계정 닉네임을 따라감 (없으면 기본)
+  const nick = acc && acc.nick ? acc.nick : '퀴잰용용';   // QuizN 계정 닉네임을 따라감 (없으면 기본)
   return `
   <header class="labs-header">
     <div class="inner">

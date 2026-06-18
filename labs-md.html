@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoftN Labs — 프로젝트 문서</title>
+<link rel="stylesheet" href="./colors_and_type.css">
+<link rel="stylesheet" href="./fonts/fontello/css/fontello.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap');
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #f4f6fb;
+  font-family: 'Noto Sans KR', 'HGGGothicssi', sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #1e293b;
+}
+
+/* ── 사이드바 TOC ── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 240px; height: 100vh;
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  padding: 32px 20px;
+  overflow-y: auto;
+  z-index: 10;
+}
+.sidebar-logo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800; font-size: 15px;
+  letter-spacing: 0.5px;
+  color: #2563eb;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.sidebar-logo .s-mark {
+  width: 22px; height: 22px; border-radius: 6px;
+  background: #2563eb; color: #fff; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 13px; font-weight: 800;
+}
+.sidebar-subtitle {
+  font-size: 11px; color: #94a3b8;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.toc-label {
+  font-size: 10px; font-weight: 700; color: #cbd5e1;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.toc-list { list-style: none; margin: 0; padding: 0; }
+.toc-list li { margin-bottom: 2px; }
+.toc-list a {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px; color: #475569; text-decoration: none;
+  transition: all 0.15s;
+}
+.toc-list a:hover { background: #eff6ff; color: #2563eb; }
+.toc-list a.active { background: #eff6ff; color: #2563eb; font-weight: 700; }
+.toc-list .sub a { padding-left: 22px; font-size: 12px; color: #64748b; }
+
+/* ── 메인 콘텐츠 ── */
+.main-wrap {
+  margin-left: 240px;
+  padding: 60px 64px 120px;
+  max-width: 1040px;
+}
+
+/* 페이지 헤더 */
+.page-header {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  border-radius: 16px;
+  padding: 48px 52px;
+  margin-bottom: 56px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='350' cy='50' r='120' fill='rgba(255,255,255,0.06)'/%3E%3Ccircle cx='50' cy='150' r='80' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E") no-repeat right center;
+}
+.page-header .eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 12px;
+}
+.page-header h1 {
+  font-size: 32px; font-weight: 800;
+  margin: 0 0 12px; letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 12px;
+}
+.page-header h1 .labs-tag {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700; letter-spacing: 2px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 6px; padding: 4px 10px;
+}
+.page-header p {
+  font-size: 15px; color: rgba(255,255,255,0.85);
+  margin: 0; max-width: 580px;
+}
+.file-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50px;
+  padding: 6px 14px; font-size: 12px;
+  font-family: 'SF Mono', Consolas, monospace;
+  margin-top: 20px; margin-right: 8px; color: #fff;
+  text-decoration: none;
+}
+.file-badge:hover { background: rgba(255,255,255,0.28); }
+
+/* 섹션 */
+.section {
+  margin-bottom: 64px;
+  scroll-margin-top: 32px;
+}
+.section-title {
+  font-size: 22px; font-weight: 800;
+  margin: 0 0 24px; padding-bottom: 12px;
+  border-bottom: 2px solid #2563eb;
+  display: flex; align-items: center; gap: 10px;
+  letter-spacing: -0.02em;
+}
+.section-title .icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: #eff6ff; color: #2563eb;
+  display: grid; place-items: center; font-size: 16px;
+  flex-shrink: 0; border: 1px solid #bfdbfe;
+}
+.subsection-title {
+  font-size: 16px; font-weight: 700;
+  margin: 32px 0 12px;
+  color: #1e40af;
+  display: flex; align-items: center; gap: 8px;
+}
+.subsection-title::before {
+  content: ""; width: 3px; height: 16px;
+  background: #2563eb; border-radius: 2px; flex-shrink: 0;
+}
+
+/* 카드 */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 12px rgba(15,23,42,0.06);
+  margin-bottom: 20px;
+}
+.card + .card { margin-top: 16px; }
+
+/* 파일 트리 */
+.file-tree {
+  background: #0f172a;
+  border-radius: 12px;
+  padding: 28px 32px;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 13px; line-height: 2;
+  color: #cbd5e1;
+  overflow-x: auto;
+}
+.file-tree .dir { color: #60a5fa; font-weight: 700; }
+.file-tree .file { color: #86efac; }
+.file-tree .comment { color: #64748b; }
+.file-tree .star { color: #fbbf24; font-weight: 700; }
+
+/* 코드 블록 */
+pre {
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 20px 24px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 13px; line-height: 1.8;
+  color: #cbd5e1;
+}
+p code, li code {
+  background: #eff6ff;
+  color: #1e40af;
+  padding: 2px 7px; border-radius: 4px;
+  font-size: 12.5px;
+  border: 1px solid #bfdbfe;
+}
+
+/* syntax highlight */
+.kw  { color: #c4b5fd; }
+.str { color: #86efac; }
+.cm  { color: #64748b; }
+.fn  { color: #60a5fa; }
+.num { color: #fdba74; }
+.prop{ color: #93c5fd; }
+
+/* 리스트 */
+ul { padding-left: 22px; margin: 10px 0; }
+ul li { margin-bottom: 6px; }
+ul li strong { color: #1e40af; }
+
+/* 토큰 변수 카드 */
+.token-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 12px; margin: 16px 0;
+}
+.token-item {
+  background: #f8fafc; border: 1px solid #e2e8f0;
+  border-radius: 8px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.token-swatch {
+  width: 36px; height: 36px; border-radius: 8px;
+  flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06);
+}
+.token-info .name {
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 12px; font-weight: 700; color: #1e293b;
+}
+.token-info .val {
+  font-size: 11px; color: #94a3b8; font-family: 'SF Mono', Consolas, monospace;
+}
+
+/* 상태 뱃지 */
+.status-row { display: flex; gap: 10px; margin: 16px 0; flex-wrap: wrap; }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 700;
+}
+.status-badge.beta     { background: #fef3c7; color: #b45309; }
+.status-badge.live     { background: #dcfce7; color: #15803d; }
+.status-badge.archived { background: #f1f5f9; color: #64748b; }
+
+/* 권한 카드 */
+.role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0; }
+.role-card {
+  border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;
+  background: #fff;
+}
+.role-card .role-head {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 800; font-size: 15px; margin-bottom: 4px;
+}
+.role-card .role-tag {
+  font-family: 'SF Mono', monospace; font-size: 11px;
+  background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;
+  border-radius: 50px; padding: 2px 8px;
+}
+.role-card.guest  { border-top: 3px solid #9ca3af; }
+.role-card.member { border-top: 3px solid #2563eb; }
+.role-card.staff  { border-top: 3px solid #1e3a8a; }
+.role-card p { font-size: 13px; color: #64748b; margin: 8px 0 0; }
+
+/* 플로우 다이어그램 */
+.flow {
+  display: flex; align-items: stretch; gap: 0; flex-wrap: wrap;
+  margin: 16px 0;
+}
+.flow-step {
+  flex: 1; min-width: 130px;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+  padding: 16px 14px; text-align: center; position: relative;
+}
+.flow-step .fs-file {
+  font-family: 'SF Mono', monospace; font-size: 11px; color: #2563eb; font-weight: 700;
+  display: block; margin-bottom: 4px;
+}
+.flow-step .fs-desc { font-size: 12px; color: #64748b; }
+.flow-arrow { display: grid; place-items: center; color: #94a3b8; font-weight: 700; padding: 0 6px; }
+
+/* 패턴 박스 */
+.pattern-box {
+  background: #fff; border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden; margin-bottom: 16px;
+}
+.pattern-box-head {
+  background: #f8fafc; padding: 12px 20px;
+  font-weight: 700; font-size: 14px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.pattern-box-head .tag {
+  background: #eff6ff; color: #1e40af;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+  padding: 2px 8px; border-radius: 50px;
+  border: 1px solid #bfdbfe;
+  font-family: 'SF Mono', monospace;
+}
+.pattern-box-head .staff-only {
+  background: #1e3a8a; color: #fff; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 50px; letter-spacing: 0.05em;
+}
+.pattern-box-body { padding: 20px; }
+
+/* 도구 테이블 */
+.tool-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tool-table th {
+  background: #eff6ff; color: #1e40af; font-weight: 700;
+  padding: 10px 16px; text-align: left;
+  border-bottom: 2px solid #bfdbfe;
+}
+.tool-table td {
+  padding: 12px 16px; border-bottom: 1px solid #f1f5f9;
+  vertical-align: top;
+}
+.tool-table tr:last-child td { border-bottom: 0; }
+.tool-table .badge {
+  display: inline-block;
+  padding: 2px 10px; border-radius: 50px; font-size: 11px; font-weight: 700;
+  margin-bottom: 2px;
+}
+.badge-agent  { background: #fde9b5; color: #a36e00; }
+.badge-skill  { background: #d5e6f7; color: #2d5d99; }
+.badge-mcp    { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.badge-plugin { background: #f5f0ff; color: #7249b7; }
+
+/* 고지 형식 박스 */
+.notice-box {
+  background: #0f172a; border-radius: 12px;
+  padding: 24px 28px; margin: 20px 0;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 13px; line-height: 2; color: #cbd5e1;
+}
+.notice-box .nt-line { display: flex; gap: 12px; }
+.notice-box .nt-key  { color: #60a5fa; }
+.notice-box .nt-val  { color: #86efac; }
+.notice-box .nt-meta { color: #64748b; }
+.notice-box .nt-head { color: #fbbf24; font-weight: 700; margin-bottom: 6px; }
+
+/* 레이아웃 다이어그램 */
+.layout-diagram {
+  background: #0f172a; border-radius: 12px;
+  padding: 24px 28px; margin: 16px 0;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 13px; line-height: 2; color: #cbd5e1;
+}
+.layout-diagram .ld-root { color: #60a5fa; }
+.layout-diagram .ld-a   { color: #2563eb; font-weight: 700; }
+.layout-diagram .ld-b   { color: #93c5fd; }
+.layout-diagram .ld-c   { color: #c4b5fd; }
+.layout-diagram .ld-d   { color: #86efac; }
+.layout-diagram .ld-dim { color: #64748b; }
+
+/* 라이브 배포 박스 */
+.deploy-box {
+  background: linear-gradient(135deg, #1e40af, #2563eb);
+  border-radius: 12px; padding: 24px 28px;
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+}
+.deploy-box .cmd {
+  flex: 1; min-width: 280px;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 13px; color: #fff; line-height: 2;
+}
+.deploy-box .cmd .label { color: rgba(255,255,255,0.6); }
+.deploy-box .cmd .url { color: #bbf7d0; font-weight: 700; }
+.deploy-btn {
+  background: #fff; color: #1e40af;
+  border: 0; border-radius: 8px;
+  padding: 10px 20px; font-weight: 700; font-size: 13px;
+  cursor: pointer; white-space: nowrap; text-decoration: none;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.deploy-btn:hover { background: #eff6ff; }
+
+/* 알림 배너 */
+.alert-info {
+  background: #eff6ff; border-left: 4px solid #2563eb;
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px; font-size: 13px; color: #475569;
+  margin: 16px 0; display: flex; gap: 10px; align-items: flex-start;
+}
+.alert-info .icon { color: #2563eb; flex-shrink: 0; font-size: 16px; }
+.alert-warn {
+  background: #fffbeb; border-left: 4px solid #f59e0b;
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px; font-size: 13px; color: #92400e;
+  margin: 16px 0; display: flex; gap: 10px; align-items: flex-start;
+}
+.alert-warn .icon { color: #f59e0b; flex-shrink: 0; font-size: 16px; }
+
+/* 규칙 번호 리스트 */
+.rule-list { list-style: none; padding: 0; margin: 0; }
+.rule-list li {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 14px 0; border-bottom: 1px solid #f1f5f9;
+}
+.rule-list li:last-child { border-bottom: 0; }
+.rule-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #2563eb; color: #fff;
+  display: grid; place-items: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 800; flex-shrink: 0;
+  margin-top: 2px;
+}
+.rule-content strong { display: block; font-size: 14px; margin-bottom: 2px; }
+.rule-content span { font-size: 13px; color: #475569; }
+
+/* 모델 테이블 */
+.model-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.model-table th {
+  background: #f8fafc; color: #475569; font-weight: 700;
+  padding: 10px 14px; text-align: left; border-bottom: 1px solid #e2e8f0;
+}
+.model-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; }
+.model-table tr:last-child td { border-bottom: 0; }
+.model-table .key { font-family: 'SF Mono', monospace; font-size: 12px; color: #1e40af; }
+.mini-badge { font-size: 10px; font-weight: 700; padding: 1px 8px; border-radius: 50px; }
+.mini-badge.beta { background: #fef3c7; color: #b45309; }
+.mini-badge.live { background: #dcfce7; color: #15803d; }
+.mini-badge.archived { background: #f1f5f9; color: #64748b; }
+
+/* 스크롤바 */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
+
+/* 반응형 */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main-wrap { margin-left: 0; padding: 32px 24px 80px; }
+  .token-grid, .role-grid { grid-template-columns: 1fr; }
+  .flow { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- 사이드바 TOC -->
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="s-mark">S</span> SoftN Labs</div>
+  <div class="sidebar-subtitle">프로젝트 문서</div>
+  <div class="toc-label">목차</div>
+  <ul class="toc-list" id="toc">
+    <li><a href="#overview">📋 프로젝트 개요</a></li>
+    <li><a href="#structure">📁 디렉토리 구조</a></li>
+    <li><a href="#design">🎨 디자인 시스템</a></li>
+    <li class="sub"><ul class="toc-list">
+      <li><a href="#tokens">블루 토큰 (라이트/다크)</a></li>
+      <li><a href="#status">상태색</a></li>
+      <li><a href="#fonts">폰트</a></li>
+    </ul></li>
+    <li><a href="#roles">🔐 권한 3단계</a></li>
+    <li><a href="#flow">🚪 진입 플로우</a></li>
+    <li><a href="#pages">📄 페이지별 구성</a></li>
+    <li><a href="#state">💾 상태 관리 &amp; 패턴</a></li>
+    <li><a href="#deploy">🚀 배포 (GitHub Pages)</a></li>
+    <li><a href="#principles">📐 개발 원칙</a></li>
+    <li><a href="#tools">🛠 사용 도구 고지</a></li>
+  </ul>
+</nav>
+
+<!-- 메인 콘텐츠 -->
+<main class="main-wrap">
+
+  <!-- 페이지 헤더 -->
+  <div class="page-header">
+    <div class="eyebrow">SoftN · QuizN 실험실 포털</div>
+    <h1>SoftN Labs <span class="labs-tag">LABS</span></h1>
+    <p>QuizN의 실험적 edu-tech 기능을 공개·검증하는 독립 포털. 파란 액센트 + 다크모드의 정적 HTML/CSS/JS 디자인 시안.</p>
+    <a class="file-badge" href="https://gylee209-oss.github.io/quizn-labs/" target="_blank">🌐 gylee209-oss.github.io/quizn-labs</a>
+    <span class="file-badge">📁 /Users/leegayeong/AX_Claude/quizn/labs/</span>
+  </div>
+
+  <!-- 1. 프로젝트 개요 -->
+  <section class="section" id="overview">
+    <h2 class="section-title"><span class="icon">📋</span> 프로젝트 개요</h2>
+    <div class="card">
+      <p style="margin:0 0 16px;"><strong>SoftN Labs</strong>는 QuizN의 실험적 기능·프로토타입을 모아 사용자 피드백(평점·댓글)을 받는 <strong>독립 포털</strong>이다. 기존 QuizN(민트/주황)과 별개의 <strong>파란 액센트 + 다크모드</strong> 디자인 시스템을 쓴다.</p>
+      <p style="margin:0;">프레임워크 없이 <strong>vanilla JS + CSS 변수</strong>로만 구현하며, 로그인·권한·모델 등록을 <code>localStorage</code> 기반으로 시뮬레이션하는 정적 시안이다.</p>
+      <div class="status-row" style="margin-top:24px;">
+        <span class="status-badge beta">● 베타</span>
+        <span class="status-badge live">● 정식</span>
+        <span class="status-badge archived">● 보관</span>
+      </div>
+      <div class="alert-info">
+        <span class="icon">ℹ</span>
+        <span>원래 <code>boards/</code> 민트 앱셸 안의 단일 화면이었으나, 독립 포털로 재구성하며 <strong><code>labs/</code> 디렉토리로 분리</strong>되어 GitHub Pages에 단독 배포되었다.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 디렉토리 구조 -->
+  <section class="section" id="structure">
+    <h2 class="section-title"><span class="icon">📁</span> 디렉토리 구조</h2>
+    <div class="file-tree">
+<span class="dir">quizn/</span>
+└── <span class="dir">labs/</span>                      <span class="comment"># SoftN Labs 배포 단위 (boards/에서 분리·이동)</span>
+    ├── <span class="file">labs.css</span>               <span class="comment"># 디자인 시스템 (블루, 라이트/다크 토큰 + 공통 컴포넌트)</span>
+    ├── <span class="file">labs.js</span>                <span class="comment"># 공유 모듈 (권한·모델·헤더·게이트·DOM 유틸)</span>
+    ├── <span class="file">colors_and_type.css</span>    <span class="comment"># QuizN SHOW 토큰 (quizn-home·myshow·labs-auth 전용)</span>
+    ├── <span class="dir">fonts/</span>                    <span class="comment"># HGGGothicssi(브랜드) + fontello(아이콘)</span>
+    ├── <span class="file">index.html</span>             <span class="comment"># 루트 → labs.html 리다이렉트</span>
+    ├── <span class="file star">★ labs.html</span>            <span class="comment"># 모델 목록 (검색·필터·정렬·카드 8개 페이지네이션)</span>
+    ├── <span class="file">labs-detail.html</span>      <span class="comment"># 모델 상세 (피드백·평점분포·배포이력)</span>
+    ├── <span class="file">labs-write.html</span>       <span class="comment"># 모델 등록·수정 (Staff 전용)</span>
+    ├── <span class="file">labs-admin.html</span>       <span class="comment"># 권한 관리 (Staff 전용)</span>
+    ├── <span class="file">quizn-home.html</span>       <span class="comment"># QuizN 메인 (비로그인 진입점, SHOW 주황)</span>
+    ├── <span class="file">myshow.html</span>           <span class="comment"># My Show (로그인 후, GNB에 Labs 진입)</span>
+    └── <span class="file">labs-auth.html</span>        <span class="comment"># QuizN 계정으로 Labs 접속 인가 화면</span>
+    </div>
+    <div class="alert-warn">
+      <span class="icon">⚠</span>
+      <span>분리 시 <code>colors_and_type.css</code>가 누락되면 <code>quizn-home·myshow·labs-auth</code>의 SHOW 주황 테마가 깨진다. 이 3개 페이지가 참조하므로 반드시 <code>labs/</code>에 포함해야 한다. (<code>board-common.css</code>는 Labs가 안 써서 불필요.)</span>
+    </div>
+  </section>
+
+  <!-- 3. 디자인 시스템 -->
+  <section class="section" id="design">
+    <h2 class="section-title"><span class="icon">🎨</span> 디자인 시스템 (labs.css)</h2>
+
+    <h3 class="subsection-title" id="tokens">블루 토큰 — 라이트 / 다크</h3>
+    <div class="card">
+      <ul>
+        <li><strong>모든 색상은 CSS 변수로만</strong> 참조. 하드코딩은 <code>labs.css</code> 토큰 정의부에만.</li>
+        <li>두 세트: <code>:root</code>(라이트) / <code>[data-mode="dark"]</code>(다크). FOUC 방지로 <code>&lt;head&gt;</code>에서 즉시 적용.</li>
+        <li>액센트는 파란 <code>--accent: #2563eb</code> (로고·뱃지·버튼·활성 필터·내 평점).</li>
+      </ul>
+      <div class="token-grid" style="margin-top:20px;">
+        <div class="token-item">
+          <div class="token-swatch" style="background:#2563eb;"></div>
+          <div class="token-info"><div class="name">--accent</div><div class="val">#2563eb · 파란 액센트</div></div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#f59e0b;"></div>
+          <div class="token-info"><div class="name">--star</div><div class="val">#f59e0b · 별점 amber</div></div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#ffffff;border:1px solid #e2e8f0;"></div>
+          <div class="token-info"><div class="name">--bg (라이트)</div><div class="val">#ffffff / soft #f8fafc</div></div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#0f172a;"></div>
+          <div class="token-info"><div class="name">--bg (다크)</div><div class="val">#0f172a / elev #1e293b</div></div>
+        </div>
+      </div>
+      <pre><code><span class="cm">/* 라이트 */</span>
+<span class="prop">:root</span> {
+  <span class="kw">--accent</span>: <span class="num">#2563eb</span>;  <span class="kw">--bg</span>: <span class="num">#ffffff</span>;  <span class="kw">--bg-soft</span>: <span class="num">#f8fafc</span>;
+  <span class="kw">--fg</span>: <span class="num">#0f172a</span>;     <span class="kw">--border</span>: <span class="num">#e2e8f0</span>;  <span class="kw">--star</span>: <span class="num">#f59e0b</span>;
+}
+<span class="cm">/* 다크 */</span>
+<span class="prop">[data-mode="dark"]</span> {
+  <span class="kw">--bg</span>: <span class="num">#0f172a</span>;  <span class="kw">--bg-elev</span>: <span class="num">#1e293b</span>;
+  <span class="kw">--fg</span>: <span class="num">#f1f5f9</span>;  <span class="kw">--border</span>: <span class="num">#334155</span>;
+}</code></pre>
+    </div>
+
+    <h3 class="subsection-title" id="status">상태색 — 모델 라이프사이클</h3>
+    <div class="card">
+      <div class="status-row">
+        <span class="status-badge beta">베타 · BETA</span>
+        <span class="status-badge live">정식 · LIVE</span>
+        <span class="status-badge archived">보관 · ARCHIVED</span>
+      </div>
+      <ul>
+        <li><strong>BETA</strong> <code>#f59e0b</code> (amber) · <strong>LIVE</strong> <code>#22c55e</code> (green) · <strong>ARCHIVED</strong> <code>#9ca3af</code> (gray)</li>
+        <li>각 상태는 연한 배경 + 진한 텍스트의 pill 뱃지. 목록 필터 칩(전체/베타/정식/보관)과 카드 뱃지에 공유.</li>
+        <li>보관(archived) 모델은 상세에서 별도 배너로 안내.</li>
+      </ul>
+    </div>
+
+    <h3 class="subsection-title" id="fonts">폰트</h3>
+    <div class="card">
+      <ul>
+        <li><strong>Labs 본문</strong>: <code>system-ui, 'Noto Sans KR', sans-serif</code> — QuizN 브랜드 폰트와 별개.</li>
+        <li><strong>진입 플로우</strong>(quizn-home·myshow·labs-auth): SHOW 테마라 <code>HGGGothicssi</code>(<code>colors_and_type.css</code>) 사용.</li>
+        <li><strong>아이콘</strong>: Fontello 아이콘 폰트 (<code>&lt;i class="icon-*"&gt;</code>). 다크토글만 인라인 SVG(Fontello에 moon/sun 글리프 없음).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. 권한 3단계 -->
+  <section class="section" id="roles">
+    <h2 class="section-title"><span class="icon">🔐</span> 권한 3단계</h2>
+    <div class="card">
+      <div class="role-grid">
+        <div class="role-card guest">
+          <div class="role-head">비로그인 <span class="role-tag">guest</span></div>
+          <p>게이트 오버레이만 노출. 콘텐츠 접근 불가. 역할 전환 segment에서 제외(플로우로만 진입).</p>
+        </div>
+        <div class="role-card member">
+          <div class="role-head">일반 <span class="role-tag">member</span></div>
+          <p>모델 확인·댓글·좋아요·평점 가능. <code>new-post</code>·"관리" 메뉴 숨김.</p>
+        </div>
+        <div class="role-card staff">
+          <div class="role-head">운영 <span class="role-tag">staff</span></div>
+          <p>새 모델 등록(<code>new-model</code>), 헤더 "관리"(admin-link), 권한관리 화면, 등록모델 수정·삭제.</p>
+        </div>
+      </div>
+      <ul style="margin-top:8px;">
+        <li>상태는 <code>localStorage.labs_auth</code> = <code>'guest' | 'member' | 'staff'</code>.</li>
+        <li>헤더의 Member/Staff 토글로 역할 전환(로그인 상태에서만). 권한관리 화면 segment는 <code>['member','staff']</code>만.</li>
+      </ul>
+      <pre><code><span class="fn">function</span> <span class="fn">isMember</span>() { <span class="kw">return</span> getAuth() !== <span class="str">'guest'</span>; }  <span class="cm">// 멤버·스태프 공통</span>
+<span class="fn">function</span> <span class="fn">isStaff</span>()  { <span class="kw">return</span> getAuth() === <span class="str">'staff'</span>; }   <span class="cm">// 운영/작성 권한</span></code></pre>
+    </div>
+  </section>
+
+  <!-- 5. 진입 플로우 -->
+  <section class="section" id="flow">
+    <h2 class="section-title"><span class="icon">🚪</span> QuizN 계정 인가 플로우</h2>
+    <div class="card">
+      <div class="flow">
+        <div class="flow-step"><span class="fs-file">quizn-home.html</span><span class="fs-desc">비로그인 메인 · "만들기"</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><span class="fs-file">myshow.html</span><span class="fs-desc">My Show · GNB "Labs[NEW]"</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><span class="fs-file">labs-auth.html</span><span class="fs-desc">계정 인가 "접속"</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><span class="fs-file">labs.html</span><span class="fs-desc">Labs 목록</span></div>
+      </div>
+      <ul style="margin-top:12px;">
+        <li><code>myshow.goLabs()</code>: <code>quizn_account = {nick:'퀴잰용용', id:'quizn_yong'}</code>를 <code>localStorage</code>에 저장 후 labs-auth로 이동.</li>
+        <li><code>labs-auth</code>: <code>quizn_account</code>를 읽어 계정 표시 → "접속" 시 <code>labs_auth='member'</code> 설정 후 labs.html.</li>
+        <li><strong><code>quizn_account = {nick, id}</code>는 계정 정체성 단일 소스</strong> — 헤더 아바타/이름, 권한관리의 "나" 행으로 전파(없으면 기본 '서도영').</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6. 페이지별 구성 -->
+  <section class="section" id="pages">
+    <h2 class="section-title"><span class="icon">📄</span> 페이지별 구성</h2>
+
+    <div class="pattern-box">
+      <div class="pattern-box-head">★ labs.html <span class="tag">모델 목록</span></div>
+      <div class="pattern-box-body">
+        <ul>
+          <li>헤더(주입) + 히어로 + 컨트롤 바(검색·상태 필터 칩·정렬) + 모델 카드 그리드(4열).</li>
+          <li><code>VIEW_MODELS = customModels.concat(MODELS)</code> — 등록 모델이 목록 상단에. <strong>카드 8개씩 페이지네이션</strong>(<code>PER_PAGE=8</code>).</li>
+          <li>카드: 상태 뱃지 + 썸네일(사선+PRODUCT SHOT+이니셜) + 모델명 + 설명 + 별점 + 외부링크. 클릭 → <code>labs-detail.html?model={key}</code>.</li>
+          <li>정렬: 최신 수정순 / 평점순 / 평가 많은순 / 이름순.</li>
+        </ul>
+        <table class="model-table" style="margin-top:8px;">
+          <thead><tr><th>모델</th><th>key</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td>토론 시스템</td><td class="key">debate</td><td><span class="mini-badge live">정식</span></td></tr>
+            <tr><td>프롬프트 랩</td><td class="key">prompt_lab</td><td><span class="mini-badge live">정식</span></td></tr>
+            <tr><td>노션 브릿지</td><td class="key">notion_bridge</td><td><span class="mini-badge live">정식</span></td></tr>
+            <tr><td>미디어텔러</td><td class="key">media_teller</td><td><span class="mini-badge beta">베타</span></td></tr>
+            <tr><td>DBMS 매니저</td><td class="key">dbms_manager</td><td><span class="mini-badge beta">베타</span></td></tr>
+            <tr><td>코드 아키오</td><td class="key">code_archio</td><td><span class="mini-badge beta">베타</span></td></tr>
+            <tr><td>보이스 메모 to 글</td><td class="key">voice_memo</td><td><span class="mini-badge beta">베타</span></td></tr>
+            <tr><td>ERD 디자인 v2</td><td class="key">erd_v2</td><td><span class="mini-badge archived">보관</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pattern-box">
+      <div class="pattern-box-head">labs-detail.html <span class="tag">?model={key}</span></div>
+      <div class="pattern-box-body">
+        <ul>
+          <li>breadcrumb + 좌측 큰 썸네일 / 우측 상태·모델명·키 코드칩·설명·데모 버튼.</li>
+          <li>통계 3분할(평균 평점 / 배포 버전 / 활동) + 평점 분포 막대 + <strong>내 평점</strong>(별 클릭 입력).</li>
+          <li>탭: 피드백(댓글+별점·페이지네이션) · 공지 · 투표 · 배포 이력.</li>
+          <li><strong>연결방식(link) 규칙</strong>: <code>none</code>→데모 버튼 숨김 / <code>trial</code>→"체험하기" / 그 외→"외부 데모 열기".</li>
+          <li>댓글: 본인(<code>name==='나'</code>)만 수정(인라인)·삭제(<code>showConfirm</code> 커스텀 모달). <code>textContent</code> 조립(XSS 방지) + IME <code>isComposing</code> 가드.</li>
+          <li>Staff && <code>isCustomModel</code> → 우상단 owner-actions(수정·삭제) 노출.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pattern-box">
+      <div class="pattern-box-head">labs-write.html <span class="staff-only">STAFF</span> <span class="tag">등록 · 수정</span></div>
+      <div class="pattern-box-body">
+        <ul>
+          <li>제출 시 <code>labs_custom_models</code>에 <code>unshift</code>. 작성 중 임시저장은 <code>labs_draft_new_model</code>.</li>
+          <li><code>?edit={key}</code> 모드: 제목 "모델 수정" / 버튼 "수정 완료", 기존 평점·카운트 보존.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pattern-box">
+      <div class="pattern-box-head">labs-admin.html <span class="staff-only">STAFF</span> <span class="tag">권한 관리</span></div>
+      <div class="pattern-box-body">
+        <ul>
+          <li>사용자 목록 + 역할 전환(member/staff). 본인 행은 <code>quizn_account.nick + ' (나)'</code>로 표시, 닉네임 검색 가능.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 상태 관리 & 패턴 -->
+  <section class="section" id="state">
+    <h2 class="section-title"><span class="icon">💾</span> 상태 관리 &amp; 공통 패턴</h2>
+    <div class="card">
+      <strong style="display:block;margin-bottom:10px;">localStorage 상태 (페이지·새 탭 간 유지)</strong>
+      <div class="layout-diagram">
+<span class="ld-a">labs_auth</span>           <span class="ld-dim"># 권한 guest | member | staff</span>
+<span class="ld-a">labs_theme</span>          <span class="ld-dim"># 라이트 | 다크 (head에서 FOUC 방지 즉시 적용)</span>
+<span class="ld-b">quizn_account</span>       <span class="ld-dim"># {nick, id} — 계정 정체성 단일 소스</span>
+<span class="ld-c">labs_custom_models</span>  <span class="ld-dim"># Staff가 등록한 모델 배열</span>
+<span class="ld-d">labs_draft_new_model</span><span class="ld-dim"># 작성 중 임시저장</span>
+      </div>
+    </div>
+    <div class="card">
+      <strong style="display:block;margin-bottom:10px;">비로그인 게이트</strong>
+      <ul>
+        <li>guest 상태에서 콘텐츠 위 오버레이: <em>"QuizN 로그인이 필요합니다 / SoftN의 자산입니다"</em> + 로그인 버튼.</li>
+        <li>헤더 로그인 토글 또는 진입 플로우로 member 전환 시 게이트 해제.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <strong style="display:block;margin-bottom:10px;">모델 조회 — 커스텀 + 기본 병합</strong>
+      <pre><code><span class="fn">function</span> <span class="fn">getModel</span>(key) {
+  <span class="kw">const</span> customs = JSON.parse(localStorage.getItem(<span class="str">'labs_custom_models'</span>) || <span class="str">'[]'</span>);
+  <span class="kw">return</span> customs.concat(MODELS).find(m => m.key === key);  <span class="cm">// 등록 모델 포함 조회</span>
+}</code></pre>
+    </div>
+    <div class="alert-warn">
+      <span class="icon">⚠</span>
+      <span><strong>알려진 함정</strong> — ① <code>[hidden]</code>이 <code>.btn{display:inline-flex}</code> 등에 무력화됐던 버그 → 전역 <code>[hidden]{display:none!important}</code>로 해결. ② <code>labs.js</code> 브라우저 캐시 → 로드 시 <code>?v=20260617</code> 쿼리 부착.</span>
+    </div>
+  </section>
+
+  <!-- 8. 배포 -->
+  <section class="section" id="deploy">
+    <h2 class="section-title"><span class="icon">🚀</span> 배포 — GitHub Pages</h2>
+    <div class="deploy-box">
+      <div class="cmd">
+        <div><span class="label">저장소</span> gylee209-oss/quizn-labs <span class="label">(public)</span></div>
+        <div><span class="label">소스</span> main 브랜치 / 루트(/)</div>
+        <div style="margin-top:8px;">→ <span class="url">https://gylee209-oss.github.io/quizn-labs/</span></div>
+      </div>
+      <a class="deploy-btn" href="https://gylee209-oss.github.io/quizn-labs/" target="_blank">라이브 열기 →</a>
+    </div>
+    <div class="card">
+      <ul>
+        <li><code>labs/</code> 내용을 새 저장소 <strong>루트</strong>로 push(<code>.DS_Store</code> 제외) → 루트 접속 시 <code>index.html</code>이 <code>labs.html</code>로 자동 이동.</li>
+        <li>사이트가 루트에 있어 <strong>Actions 워크플로우 불필요</strong> — Pages를 <code>main</code>/<code>root</code>로 켜면 끝.</li>
+        <li>재배포: <code>labs/</code> 수정 → 같은 방식으로 push하면 Pages 자동 재빌드.</li>
+      </ul>
+      <div class="alert-warn">
+        <span class="icon">⚠</span>
+        <span><strong>토큰</strong> — Fine-grained PAT는 "레포 생성(Administration)"과 "push(Contents:write)"가 별개 권한이고, "Only select repositories"면 새 레포가 범위 밖이라 push 403. Pages 활성화엔 <code>Pages:write</code>가 별도로 필요(없으면 웹 UI에서 직접). 가장 단순한 길은 Classic PAT(<code>repo</code>+<code>workflow</code>).</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. 개발 원칙 -->
+  <section class="section" id="principles">
+    <h2 class="section-title"><span class="icon">📐</span> 개발 원칙</h2>
+    <div class="card">
+      <ul class="rule-list">
+        <li><span class="rule-num">1</span><div class="rule-content"><strong>프레임워크 없음</strong><span>Vanilla JS + CSS 변수만. React / Vue 금지.</span></div></li>
+        <li><span class="rule-num">2</span><div class="rule-content"><strong>색상은 토큰으로만</strong><span>하드코딩은 <code>labs.css</code> 토큰 정의부에만. 컴포넌트는 <code>var(--*)</code> 참조.</span></div></li>
+        <li><span class="rule-num">3</span><div class="rule-content"><strong>아이콘은 Fontello</strong><span><code>&lt;i class="icon-*"&gt;</code>. 예외는 다크토글 인라인 SVG뿐.</span></div></li>
+        <li><span class="rule-num">4</span><div class="rule-content"><strong>XSS 방지 DOM 조립</strong><span>사용자 입력은 <code>textContent</code>로. 헤더/게이트 문자열에 동적 데이터 보간 금지.</span></div></li>
+        <li><span class="rule-num">5</span><div class="rule-content"><strong>상태는 localStorage</strong><span>권한·테마·계정·등록모델을 키로 유지. 목록↔상세·새 탭 일관.</span></div></li>
+        <li><span class="rule-num">6</span><div class="rule-content"><strong>labs/ 자체 완결</strong><span>배포 단위는 <code>labs/</code>. 진입 플로우용 <code>colors_and_type.css</code> 포함 필수.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 10. 사용 도구 고지 -->
+  <section class="section" id="tools">
+    <h2 class="section-title"><span class="icon">🛠</span> 응답 투명성 — 사용 도구 고지</h2>
+    <div class="card">
+      <p><strong>모든 답변 마지막에 실제 사용한 도구를 명시한다.</strong> 고지 형식:</p>
+      <div class="notice-box">
+        <div class="nt-head">─── 🛠 사용 도구 ───</div>
+        <div class="nt-line"><span class="nt-key">- 에이전트:</span> <span class="nt-val">[이름] — [용도]</span> <span class="nt-meta">  (없으면 "없음")</span></div>
+        <div class="nt-line"><span class="nt-key">- 스킬:    </span> <span class="nt-val">[이름] — [용도]</span> <span class="nt-meta">  (없으면 "없음")</span></div>
+        <div class="nt-line"><span class="nt-key">- MCP:     </span> <span class="nt-val">[이름] — [용도]</span> <span class="nt-meta">  (없으면 "없음")</span></div>
+        <div class="nt-line"><span class="nt-key">- 플러그인:</span> <span class="nt-val">[이름] — [용도]</span> <span class="nt-meta">  (없으면 "없음")</span></div>
+      </div>
+      <p style="margin-top:16px;">고지 바로 앞에 <strong>후속 질문 4개</strong>(확인 2 / 제안 2)를 한 섹션으로 통합 제시한다.</p>
+    </div>
+    <div class="card">
+      <strong style="display:block;margin-bottom:16px;">이 프로젝트에서 자주 쓰는 도구</strong>
+      <table class="tool-table">
+        <thead><tr><th style="width:100px;">종류</th><th style="width:280px;">이름</th><th>용도</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-skill">스킬</span></td><td><code>anthropic-skills:quizn-design-system</code></td><td>QuizN 디자인 시스템 참조 · HTML 시안 생성</td></tr>
+          <tr><td><span class="badge badge-agent">에이전트</span></td><td><code>code-reviewer</code></td><td>코드 작성 후 품질 검토</td></tr>
+          <tr><td><span class="badge badge-agent">에이전트</span></td><td><code>planner</code></td><td>다단계 작업 계획 수립</td></tr>
+          <tr><td><span class="badge badge-mcp">MCP</span></td><td><code>mcp__Claude_Preview__*</code></td><td>브라우저 미리보기 · 스크린샷 검증</td></tr>
+          <tr><td><span class="badge badge-mcp">MCP</span></td><td><code>github</code> (원격 HTTP)</td><td>저장소·이슈·PR·파일 조작 (재시작 후 활성화)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="background:#f8fafc;">
+      <strong style="display:block;margin-bottom:12px;color:#475569;">고지 규칙</strong>
+      <ul style="margin:0;color:#475569;">
+        <li>도구를 <strong>실제로 호출한 경우에만</strong> 포함. 로드만 한 도구는 제외.</li>
+        <li>내장 도구(Read·Edit·Write·Bash·Grep 등)는 고지 생략.</li>
+        <li>스킬을 <code>Skill</code> 도구로 활성화한 경우 반드시 포함.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// 스크롤 기반 TOC 활성화
+const sections = document.querySelectorAll('.section');
+const tocLinks  = document.querySelectorAll('.toc-list a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+
+// 부드러운 스크롤
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+</script>
+
+</body>
+</html>

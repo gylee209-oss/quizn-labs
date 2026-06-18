@@ -427,7 +427,7 @@ a { color: inherit; text-decoration: none; }
 .c-edit-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
 .btn.sm { padding: 7px 16px; font-size: 13px; }
 /* 확인 모달 (댓글 삭제 등) */
-.confirm-modal { width: 340px; max-width: 90%; text-align: center; }
+.confirm-modal { width: 340px; max-width: 90%; text-align: center; padding: 32px 28px; }
 .confirm-msg { font-size: 16px; font-weight: 700; color: var(--fg); margin: 8px 0 22px; }
 .confirm-actions { display: flex; gap: 10px; }
 .confirm-actions .btn { flex: 1; }
@@ -451,13 +451,18 @@ a { color: inherit; text-decoration: none; }
 .admin-toolbar { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
 .admin-count { margin-left: auto; font-size: 14px; color: var(--fg-mute); }
 .admin-table { border: 1px solid var(--border); border-radius: var(--r-card); overflow: hidden; background: var(--bg-elev); margin-bottom: 48px; }
-.ut-row { display: grid; grid-template-columns: 1.6fr 1.4fr 1fr 2fr; align-items: center; padding: 14px 20px; border-top: 1px solid var(--border); }
+.ut-row { display: grid; grid-template-columns: 1.3fr 1.9fr 0.8fr 0.9fr 1.7fr 0.6fr; align-items: center; gap: 12px; padding: 14px 20px; border-top: 1px solid var(--border); }
 .ut-row:first-child { border-top: 0; }
 .ut-head { background: var(--bg-soft); font-size: 13px; font-weight: 700; color: var(--fg-sub); }
 .ut-user { display: flex; align-items: center; gap: 10px; }
 .ut-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
 .ut-name { font-size: 15px; font-weight: 600; color: var(--fg); }
 .ut-org { font-size: 14px; color: var(--fg-sub); }
+.ut-email { font-size: 13px; color: var(--fg-sub); font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ut-del { display: flex; justify-content: center; }
+.ut-del-btn { width: 34px; height: 34px; border: 1px solid var(--border); background: var(--bg); border-radius: var(--r-btn); color: var(--fg-mute); cursor: pointer; display: grid; place-items: center; font-size: 15px; transition: all 0.15s ease; }
+.ut-del-btn:hover { border-color: var(--req-fg); color: var(--req-fg); background: var(--req-bg); }
+.ut-del-btn:disabled { opacity: 0.3; cursor: default; }
 .role-badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: var(--r-pill); }
 .role-badge.guest { background: var(--arch-bg); color: var(--arch-fg); }
 .role-badge.member { background: var(--accent-soft); color: var(--accent); }
