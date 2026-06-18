@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoftN Labs · 접속 인가</title>
+<link rel="stylesheet" href="./fonts/fontello/css/fontello.css">
+<link rel="stylesheet" href="./colors_and_type.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #eef2f7; font-family: var(--font-kr); color: var(--fg); padding: 24px; }
+  .auth { width: 440px; max-width: 100%; background: #fff; border: 1px solid var(--border); border-radius: var(--r-lg); padding: 40px 36px; box-shadow: 0 16px 40px rgba(15,23,42,0.10); text-align: center; }
+  .brands { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 26px; }
+  .brands .q { font-family: var(--font-en); font-weight: var(--fw-black); font-size: 26px; letter-spacing: -1px; }
+  .brands .q .n { color: var(--main-color); }
+  .brands .arrow { color: var(--fg-mute); font-size: 20px; }
+  .brands .labs { font-family: var(--font-en); font-weight: var(--fw-bold); font-size: 20px; color: #2563eb; display: inline-flex; align-items: center; gap: 6px; }
+  .brands .labs .tag { font-size: 10px; background: #2563eb; color: #fff; padding: 2px 7px; border-radius: var(--r-pill); font-family: var(--font-kr); }
+  h1 { font-size: 21px; font-weight: var(--fw-bold); margin: 0 0 10px; }
+  .sub { color: var(--fg-sub); font-size: 14px; line-height: 1.65; margin: 0 0 26px; }
+  .acct { display: flex; align-items: center; gap: 12px; background: var(--bg-light-color); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 18px; text-align: left; }
+  .acct .av { width: 44px; height: 44px; border-radius: 50%; background: var(--main-color); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 17px; }
+  .acct .nm { font-weight: var(--fw-bold); font-size: 15px; }
+  .acct .em { color: var(--fg-mute); font-size: 13px; margin-top: 2px; }
+  .perms { text-align: left; font-size: 13px; color: var(--fg-sub); background: #fff; border: 1px dashed var(--border-strong, #cbd5e1); border-radius: var(--r-md); padding: 16px 18px; margin-bottom: 26px; line-height: 1.9; }
+  .perms strong { color: var(--fg); display: block; margin-bottom: 6px; }
+  .btn-go { width: 100%; background: #2563eb; color: #fff; border: 0; border-radius: var(--r-md); padding: 15px; font-size: 16px; font-weight: var(--fw-bold); cursor: pointer; font-family: var(--font-kr); transition: background var(--t-fast); }
+  .btn-go:hover { background: #1d4ed8; }
+  .btn-cancel { display: block; width: 100%; margin-top: 12px; background: none; border: 0; color: var(--fg-mute); font-size: 14px; cursor: pointer; font-family: var(--font-kr); }
+  .btn-cancel:hover { color: var(--fg-sub); }
+</style>
+</head>
+<body>
+
+<div class="auth">
+  <div class="brands">
+    <span class="q">Quiz<span class="n">N</span></span>
+    <span class="arrow">→</span>
+    <span class="labs">Labs<span class="tag">NEW</span></span>
+  </div>
+  <h1>퀴즈앤 계정으로 Labs 접속</h1>
+  <p class="sub">SoftN Labs는 로그인한 퀴즈앤 회원만 이용할 수 있습니다.<br>아래 계정으로 접속을 인가합니다.</p>
+
+  <div class="acct">
+    <span class="av" id="acc-av">서</span>
+    <div>
+      <div class="nm" id="acc-nick">서도영</div>
+      <div class="em" id="acc-id">gy.lee@softn.kr</div>
+    </div>
+  </div>
+
+  <div class="perms">
+    <strong>Labs 접속 시 다음을 허용합니다</strong>
+    · 회원 식별 정보(닉네임·소속) 조회<br>
+    · Labs 활동(평점·댓글) 기록<br>
+    · 일반(Member) 권한으로 접속
+  </div>
+
+  <button class="btn-go" id="go">퀴즈앤 계정으로 Labs 접속하기</button>
+  <button class="btn-cancel" onclick="location.href='myshow.html'">취소</button>
+</div>
+
+<script>
+  // QuizN 계정(닉네임·아이디)을 MyShow에서 전달받아 표시
+  (function () {
+    var acc = null;
+    try { acc = JSON.parse(localStorage.getItem('quizn_account')); } catch (e) {}
+    if (acc) {
+      if (acc.nick) { document.getElementById('acc-nick').textContent = acc.nick; document.getElementById('acc-av').textContent = acc.nick.charAt(0); }
+      if (acc.id) document.getElementById('acc-id').textContent = acc.id;
+    }
+  })();
+  // 인가 → 일반 회원으로 로그인 처리 후 Labs 진입
+  document.getElementById('go').addEventListener('click', function () {
+    try { localStorage.setItem('labs_auth', 'member'); } catch (e) {}
+    location.href = 'labs.html';
+  });
+</script>
+
+</body>
+</html>

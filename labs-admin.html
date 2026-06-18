@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoftN Labs · 권한 관리</title>
+<link rel="stylesheet" href="./fonts/fontello/css/fontello.css">
+<link rel="stylesheet" href="./labs.css">
+<script>document.documentElement.setAttribute('data-mode', localStorage.getItem('labs_theme') || 'light');</script>
+</head>
+<body>
+
+<div id="header-slot"></div>
+
+<main class="container">
+  <nav class="breadcrumb">
+    <a href="labs.html">Labs</a><span class="sep">/</span><span class="cur">권한 관리</span>
+  </nav>
+  <h1 class="admin-title">권한 관리</h1>
+  <p class="admin-desc">Labs 사용자에게 역할(비로그인·일반·운영)을 부여하거나 회수합니다. 이 화면과 변경 권한은 운영(Staff) 사용자에게만 허용됩니다.</p>
+
+  <!-- 권한 없음 (Member 접근 시) -->
+  <div class="admin-denied" id="admin-denied" hidden>
+    <div class="ad-icon"><i class="icon-lock-filled"></i></div>
+    <h2>운영 권한이 필요합니다</h2>
+    <p>이 화면은 운영(Staff) 권한 사용자만 접근할 수 있습니다.</p>
+  </div>
+
+  <!-- 관리 콘텐츠 (Staff) -->
+  <section class="admin-content" id="admin-content" hidden>
+    <div class="admin-toolbar">
+      <div class="search"><i class="icon-zoom-in"></i><input type="text" id="user-search" placeholder="이름·소속으로 검색" autocomplete="off"></div>
+      <span class="admin-count" id="user-count"></span>
+    </div>
+    <div class="admin-table" id="user-table"></div>
+  </section>
+</main>
+
+<div id="footer-slot"></div>
+<div id="gate-slot"></div>
+
+<script src="./labs.js?v=20260617"></script>
+<script>
+  document.getElementById('header-slot').outerHTML = headerHTML();
+  document.getElementById('gate-slot').outerHTML = gateHTML();
+  injectFooter('footer-slot');
+
+  const tableEl = document.getElementById('user-table');
+  const searchEl = document.getElementById('user-search');
+  const cell = (cls, text) => el('span', cls, text);
+  const roleBadge = (role) => el('span', 'role-badge ' + role, ROLE_KO[role]);
+
+  function renderUsers() {
+    const q = searchEl.value.trim().toLowerCase();
+    const _acc = JSON.parse(localStorage.getItem('quizn_account') || 'null');   // QuizN 계정 닉네임
+    const myNick = _acc && _acc.nick ? _acc.nick : null;
+    const list = USERS.filter(function (u) {
+      if (!q) return true;
+      var hay = [u.name, u.org];
+      if (u.me && myNick) hay.push(myNick);   // 본인은 QuizN 닉네임으로도 검색
+      return hay.some(function (n) { return n.toLowerCase().includes(q); });
+    });
+    tableEl.replaceChildren();
+    const head = el('div', 'ut-row ut-head');
+    head.append(cell('ut-user', '사용자'), cell('ut-org', '소속'), cell('ut-cur', '현재 역할'), cell('ut-chg', '역할 변경'));
+    tableEl.append(head);
+    document.getElementById('user-count').textContent = '총 ' + USERS.length + '명';
+    list.forEach(u => {
+      const row = el('div', 'ut-row');
+      const uc = el('div', 'ut-user');
+      const dispName = (u.me && myNick) ? myNick : u.name;   // 본인 행은 QuizN 닉네임 + (나)
+      uc.append(el('span', 'ut-avatar', dispName.charAt(0)), el('span', 'ut-name', dispName + (u.me ? ' (나)' : '')));
+      const cc = el('div', 'ut-cur'); cc.append(roleBadge(u.role));
+      const chg = el('div', 'ut-chg');
+      const seg = el('div', 'role-seg');
+      ['member', 'staff'].forEach(r => {
+        const b = el('button', 'rs-btn' + (u.role === r ? ' active' : ''), ROLE_KO[r]);
+        if (u.me) b.disabled = true;
+        else b.addEventListener('click', () => {
+          u.role = r; renderUsers();
+          toast(strongNode(u.name), document.createTextNode(' 역할을 ' + ROLE_KO[r] + '(으)로 변경했어요'));
+        });
+        seg.append(b);
+      });
+      chg.append(seg);
+      if (u.me) chg.append(el('span', 'rs-note', '본인 권한은 변경할 수 없습니다'));
+      row.append(uc, cell('ut-org', u.org), cc, chg);
+      tableEl.append(row);
+    });
+  }
+
+  function applyAccess(member) {
+    const denied = document.getElementById('admin-denied');
+    const content = document.getElementById('admin-content');
+    if (!member) { denied.hidden = true; content.hidden = true; return; }   // 비로그인 → 게이트가 덮음
+    if (isStaff()) { denied.hidden = true; content.hidden = false; renderUsers(); }
+    else { denied.hidden = false; content.hidden = true; }                  // 일반(Member) → 권한 없음
+  }
+
+  searchEl.addEventListener('input', renderUsers);
+  initChrome((member) => applyAccess(member));
+</script>
+
+</body>
+</html>

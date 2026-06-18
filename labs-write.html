@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoftN Labs · 새 모델 등록</title>
+<link rel="stylesheet" href="./fonts/fontello/css/fontello.css">
+<link rel="stylesheet" href="./labs.css">
+<script>document.documentElement.setAttribute('data-mode', localStorage.getItem('labs_theme') || 'light');</script>
+</head>
+<body>
+
+<div id="header-slot"></div>
+
+<main class="container write-wrap">
+  <nav class="breadcrumb">
+    <a href="labs.html">Labs</a><span class="sep">/</span><span class="cur">새 모델 등록</span>
+  </nav>
+  <h1 class="write-title">새 모델 등록</h1>
+  <p class="write-sub">Labs에 노출할 모델 카드를 등록합니다. 운영(Staff) 권한 사용자만 등록할 수 있습니다.</p>
+
+  <!-- 권한 없음 -->
+  <div class="write-denied" id="write-denied" hidden>
+    <div class="wd-icon"><i class="icon-lock-filled"></i></div>
+    <h2>등록 권한이 없습니다</h2>
+    <p id="wd-msg">모델 등록은 운영(Staff) 권한 사용자만 가능합니다.</p>
+    <a class="btn ghost" href="labs.html">Labs로 돌아가기</a>
+  </div>
+
+  <!-- 모델 등록 폼 -->
+  <section class="write-card" id="write-card" hidden>
+    <div class="lm-field"><label>상태 <span class="req">필수</span></label>
+      <div class="radio-row">
+        <label class="radio-item"><input type="radio" name="m-status" value="beta" checked> 베타</label>
+        <label class="radio-item"><input type="radio" name="m-status" value="live"> 정식</label>
+        <label class="radio-item"><input type="radio" name="m-status" value="archived"> 보관</label>
+      </div>
+    </div>
+    <div class="lm-field"><label>모델명 <span class="req">필수</span></label><input class="lm-input" id="m-name" placeholder="예: 토론 시스템" maxlength="40" autocomplete="off"></div>
+    <div class="lm-field"><label>모델 키 (영문) <span class="req">필수</span></label><input class="lm-input" id="m-key" placeholder="예: debate_system" maxlength="40" autocomplete="off"></div>
+    <div class="lm-field"><label>한 줄 설명 <span class="opt">선택</span></label><textarea class="lm-textarea" id="m-desc" placeholder="모델 소개를 입력하세요" maxlength="200"></textarea></div>
+    <div class="lm-field"><label>연결 방식 <span class="req">필수</span></label>
+      <div class="radio-row">
+        <label class="radio-item"><input type="radio" name="m-link" value="demo" checked> 외부 데모 열기</label>
+        <label class="radio-item"><input type="radio" name="m-link" value="trial"> 체험하기</label>
+        <label class="radio-item"><input type="radio" name="m-link" value="none"> 미리보기 제공 안 함</label>
+      </div>
+    </div>
+    <div class="lm-field" id="url-field"><label id="url-label">연결 URL <span class="req">필수</span></label><input class="lm-input" id="m-url" placeholder="https://..." autocomplete="off"></div>
+    <div class="lm-field"><label>카드 썸네일 <span class="opt">선택</span></label>
+      <button class="vote-add" type="button" id="m-thumb">+ 대표 이미지 업로드 (시안)</button>
+      <span class="field-hint">비워두면 모델명 첫 글자로 자동 생성됩니다.</span>
+    </div>
+    <div class="lm-field"><label>설명 이미지 <span class="opt">선택</span></label>
+      <div class="img-list" id="desc-imgs"></div>
+      <button class="vote-add" type="button" id="m-add-img">+ 설명 이미지 추가 (시안)</button>
+      <span class="field-hint">상세 화면에서 모델을 소개하는 예시 이미지입니다. 여러 장 추가할 수 있습니다.</span>
+    </div>
+  </section>
+  <div class="write-foot" id="write-foot" hidden>
+    <button class="btn ghost wf-left" id="w-draft">임시저장</button>
+    <a class="btn ghost" href="labs.html">취소</a>
+    <button class="btn primary" id="w-submit">모델 등록</button>
+  </div>
+</main>
+
+<div id="footer-slot"></div>
+<div id="gate-slot"></div>
+
+<script src="./labs.js?v=20260617"></script>
+<script>
+  document.getElementById('header-slot').outerHTML = headerHTML();
+  document.getElementById('gate-slot').outerHTML = gateHTML();
+  injectFooter('footer-slot');
+  document.title = 'SoftN Labs · 새 모델 등록';
+
+  const DRAFT_KEY = 'labs_draft_new_model';
+  const card = document.getElementById('write-card');
+  const foot = document.getElementById('write-foot');
+  const denied = document.getElementById('write-denied');
+
+  function collect() {
+    return {
+      name: document.getElementById('m-name').value,
+      key: document.getElementById('m-key').value,
+      desc: document.getElementById('m-desc').value,
+      status: (document.querySelector('input[name="m-status"]:checked') || {}).value,
+      link: (document.querySelector('input[name="m-link"]:checked') || {}).value,
+      url: document.getElementById('m-url').value
+    };
+  }
+  function restore(d) {
+    if (!d) return;
+    document.getElementById('m-name').value = d.name || '';
+    document.getElementById('m-key').value = d.key || '';
+    document.getElementById('m-desc').value = d.desc || '';
+    document.getElementById('m-url').value = d.url || '';
+    if (d.status) { const s = document.querySelector('input[name="m-status"][value="' + d.status + '"]'); if (s) s.checked = true; }
+    if (d.link) { const l = document.querySelector('input[name="m-link"][value="' + d.link + '"]'); if (l) l.checked = true; }
+  }
+
+  function applyAccess(member) {
+    if (!member) { denied.hidden = true; card.hidden = true; foot.hidden = true; return; }  // 비로그인 → 게이트
+    if (isStaff()) {
+      denied.hidden = true; card.hidden = false; foot.hidden = false;
+      const editKey = new URLSearchParams(location.search).get('edit');
+      if (editKey) {   // 등록 모델 수정 모드
+        let m = null;
+        try { m = JSON.parse(localStorage.getItem('labs_custom_models') || '[]').find(x => x.key === editKey); } catch (e) {}
+        if (m) {
+          restore({ name: m.name, key: m.key, desc: m.desc, status: m.status, link: m.link || 'none', url: m.url || '' });
+          document.querySelector('.write-title').textContent = '모델 수정';
+          document.getElementById('w-submit').textContent = '수정 완료';
+          toastText('등록한 모델을 수정합니다');
+        }
+      } else {
+        const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+        if (d) { restore(d); toastText('임시저장한 내용을 불러왔어요'); }
+      }
+      updateUrlField();
+    } else {
+      denied.hidden = false; card.hidden = true; foot.hidden = true;  // 일반(Member)
+    }
+  }
+
+  document.getElementById('m-thumb').addEventListener('click', () => toastText('대표 이미지 업로드 (시안)'));
+  // 연결 방식에 따라 URL 필드 조건부 표시
+  function updateUrlField() {
+    const link = (document.querySelector('input[name="m-link"]:checked') || {}).value;
+    const f = document.getElementById('url-field'), lbl = document.getElementById('url-label'), inp = document.getElementById('m-url');
+    if (link === 'none') { f.hidden = true; return; }
+    f.hidden = false;
+    lbl.replaceChildren(
+      document.createTextNode((link === 'demo' ? '연결 URL' : '체험 경로') + ' '),
+      Object.assign(document.createElement('span'), { className: 'req', textContent: '필수' })
+    );
+    inp.placeholder = link === 'demo' ? 'https://...' : '체험 경로 또는 URL';
+  }
+  document.querySelectorAll('input[name="m-link"]').forEach(r => r.addEventListener('change', updateUrlField));
+  // 설명 이미지 추가 (선택, 복수)
+  let descImgCount = 0;
+  document.getElementById('m-add-img').addEventListener('click', () => {
+    descImgCount++;
+    const ph = el('div', 'img-ph-sm', '이미지 ' + descImgCount);
+    const del = el('button', 'del', '×'); del.addEventListener('click', () => ph.remove());
+    ph.append(del);
+    document.getElementById('desc-imgs').append(ph);
+  });
+  document.getElementById('w-draft').addEventListener('click', () => {
+    if (!isStaff()) return;
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(collect()));
+    toastText('임시저장되었어요');
+  });
+  document.getElementById('w-submit').addEventListener('click', () => {
+    if (!isStaff()) return;
+    const d = collect();
+    if (!d.name.trim()) { toastText('모델명을 입력하세요'); return; }
+    if (!d.key.trim()) { toastText('모델 키를 입력하세요'); return; }
+    if (!/^[a-z0-9_]+$/.test(d.key.trim())) { toastText('모델 키는 영문 소문자·숫자·_ 만 사용하세요'); return; }
+    if (d.link !== 'none' && !d.url.trim()) { toastText('연결 URL / 경로를 입력하세요'); return; }
+    // 등록/수정한 모델을 목록(labs.html)에 반영
+    let customs = [];
+    try { customs = JSON.parse(localStorage.getItem('labs_custom_models') || '[]'); } catch (e) {}
+    const existing = customs.find(m => m.key === d.key.trim());   // 수정 시 기존 평점·댓글 보존
+    customs = customs.filter(m => m.key !== d.key.trim());
+    const base = existing || { rating: 0, count: 0, version: '0.1.0', versions: 1, posts: 0, commentCount: 0, dist: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } };
+    customs.unshift(Object.assign({}, base, {
+      key: d.key.trim(), name: d.name.trim(), status: d.status, statusKo: STATUS_KO[d.status],
+      desc: d.desc.trim() || '새로 등록된 모델입니다.', link: d.link, url: d.url,
+      updated: new Date().toISOString().slice(0, 10)
+    }));
+    localStorage.setItem('labs_custom_models', JSON.stringify(customs));
+    localStorage.removeItem(DRAFT_KEY);
+    toast(strongNode(d.name.trim()), document.createTextNode(' 모델이 등록되었어요 · 목록으로 이동합니다'));
+    setTimeout(() => { location.href = 'labs.html'; }, 1200);
+  });
+
+  initChrome((member) => applyAccess(member));
+</script>
+
+</body>
+</html>

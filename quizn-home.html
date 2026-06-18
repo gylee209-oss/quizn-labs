@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizN · 뻔한 퀴즈가 FUN해집니다</title>
+<link rel="stylesheet" href="./colors_and_type.css">
+<style>
+  /* QuizN 메인 (quizn.show 재현) — SHOW 주황 테마. colors_and_type.css 토큰만 참조. */
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); }
+
+  /* 상단 네비 */
+  .gnav { height: 76px; display: flex; align-items: center; gap: var(--space-7); padding: 0 var(--space-7); background: var(--bg); border-bottom: 1px solid var(--border); }
+  .gnav .logo { display: flex; align-items: center; gap: var(--space-2); }
+  .gnav .logo .mark { font-family: var(--font-en); font-weight: var(--fw-black); font-size: 26px; color: var(--fg); letter-spacing: -1px; }
+  .gnav .logo .mark .n { color: var(--main-color); }
+  .gnav .logo .ko { font-size: var(--fs-caption); color: var(--fg-sub); font-weight: var(--fw-semibold); }
+  .gnav .menu { display: flex; align-items: center; gap: var(--space-6); }
+  .gnav .menu a { font-family: var(--font-en); font-size: 16px; font-weight: var(--fw-semibold); color: var(--fg-sub); text-decoration: none; cursor: pointer; transition: color var(--t-fast); }
+  .gnav .menu a:hover { color: var(--fg); }
+  .gnav .menu a.labs { color: var(--main-color); font-weight: var(--fw-bold); display: inline-flex; align-items: center; gap: 5px; }
+  .gnav .menu a.labs::after { content: "NEW"; font-size: 9px; font-weight: 700; background: var(--main-color); color: #fff; padding: 1px 5px; border-radius: var(--r-pill); }
+  .gnav .right { margin-left: auto; display: flex; align-items: center; gap: var(--space-4); }
+  .gnav .pin { font-family: var(--font-en); font-weight: var(--fw-bold); font-size: 15px; color: #fff; background: var(--brand-class); border: 0; border-radius: var(--r-sm); padding: 9px 16px; cursor: pointer; }
+  .gnav .logout { font-size: 15px; color: var(--fg); cursor: pointer; }
+  .gnav .lang { font-family: var(--font-en); font-weight: var(--fw-bold); font-size: 13px; color: #fff; background: var(--main-color); border: 0; border-radius: var(--r-pill); padding: 7px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+
+  /* 히어로 (SHOW 주황) */
+  .hero { background: var(--main-color); color: #fff; min-height: calc(100vh - 76px); display: flex; align-items: center; }
+  .hero .inner { max-width: 1280px; margin: 0 auto; padding: 0 var(--space-8); display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7); align-items: center; width: 100%; }
+  .hero h1 { font-size: 72px; font-weight: var(--fw-light); line-height: 1.15; margin: 0 0 var(--space-5); }
+  .hero h1 b { font-family: var(--font-en); font-weight: var(--fw-black); }
+  .hero .sub { font-size: var(--fs-h4); font-weight: var(--fw-light); margin: 0 0 var(--space-7); opacity: 0.95; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5) var(--space-7); max-width: 420px; margin-bottom: var(--space-7); }
+  .stats .k { font-family: var(--font-en); font-size: var(--fs-caption); opacity: 0.85; }
+  .stats .v { font-family: var(--font-en); font-size: 34px; font-weight: var(--fw-bold); }
+  .cta-row { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .cta { border: 0; border-radius: var(--r-pill); padding: 16px 30px; font-family: var(--font-kr); font-size: 16px; font-weight: var(--fw-bold); cursor: pointer; }
+  .cta.solid { background: var(--theme-deep); color: #fff; }
+  .cta.outline { background: #fff; color: var(--fg); }
+  .hero .art { display: grid; place-items: center; }
+  .hero .art .ph { width: 100%; max-width: 460px; aspect-ratio: 4/3; border-radius: var(--r-lg); background: rgba(255,255,255,0.14); display: grid; place-items: center; font-family: var(--font-en); font-weight: var(--fw-black); font-size: 56px; color: rgba(255,255,255,0.5); }
+</style>
+</head>
+<body data-theme="show">
+
+  <header class="gnav">
+    <div class="logo">
+      <span class="mark">Quiz<span class="n">N</span></span>
+      <span class="ko">퀴즈앤</span>
+    </div>
+    <nav class="menu">
+      <a>Overview</a>
+      <a>Features</a>
+      <a>Application</a>
+      <a>Gallery</a>
+      <a>Service</a>
+      <a>Price</a>
+      <a class="labs" href="labs.html" target="_blank" rel="noopener">Labs</a>
+    </nav>
+    <div class="right">
+      <button class="pin">Game PIN</button>
+      <span class="logout">로그아웃</span>
+      <button class="lang"><i class="icon-globe"></i> ENG</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="inner">
+      <div class="copy">
+        <h1>뻔한 퀴즈가<br><b>FUN</b>해집니다.</h1>
+        <p class="sub">다양한 교육지원 기능을 퀴즈앤 하나로!</p>
+        <div class="stats">
+          <div><div class="k">Show</div><div class="v">658,047</div></div>
+          <div><div class="k">Quiz</div><div class="v">7,938,334</div></div>
+          <div><div class="k">Play</div><div class="v">1,902,495</div></div>
+          <div><div class="k">Board</div><div class="v">213,487</div></div>
+        </div>
+        <div class="cta-row">
+          <button class="cta solid" onclick="location.href='myshow.html'">만들기</button>
+          <button class="cta outline">체험하기</button>
+          <button class="cta outline">게임 PIN</button>
+          <button class="cta outline">이용안내</button>
+        </div>
+      </div>
+      <div class="art"><div class="ph">VIDEO!</div></div>
+    </div>
+  </section>
+
+<script>
+  // 시안: Labs 외 메뉴/버튼은 안내만
+  document.querySelectorAll('.menu a:not(.labs), .pin, .lang, .logout, .cta').forEach(elm => {
+    elm.addEventListener('click', e => {
+      if (elm.tagName === 'A' && elm.getAttribute('href')) return;
+      alert('시안 — 준비 중입니다');
+    });
+  });
+</script>
+
+</body>
+</html>

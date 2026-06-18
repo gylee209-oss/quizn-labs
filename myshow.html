@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizN · My Show</title>
+<link rel="stylesheet" href="./fonts/fontello/css/fontello.css">
+<link rel="stylesheet" href="./colors_and_type.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f5f7; font-family: var(--font-kr); color: var(--fg); font-size: 14px; }
+  a { text-decoration: none; color: inherit; }
+
+  /* ===== 상단 GNB ===== */
+  .gnav { height: 64px; display: flex; align-items: center; gap: 36px; padding: 0 28px; background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; }
+  .gnav .logo { display: flex; align-items: center; gap: 6px; }
+  .gnav .logo .mark { font-family: var(--font-en); font-weight: var(--fw-black); font-size: 24px; letter-spacing: -1px; color: #1f2937; }
+  .gnav .logo .mark .n { color: var(--main-color); }
+  .gnav .logo .ko { font-size: 12px; color: var(--fg-sub); font-weight: var(--fw-semibold); }
+  .gnav .menu { display: flex; gap: 28px; }
+  .gnav .menu a { font-size: 16px; font-weight: var(--fw-bold); color: #374151; cursor: pointer; }
+  .gnav .menu a:hover { color: var(--main-color); }
+  .gnav .menu a.labs { color: var(--main-color); display: inline-flex; align-items: center; gap: 5px; }
+  .gnav .menu a.labs::after { content: "NEW"; font-size: 9px; font-weight: 700; background: var(--main-color); color: #fff; padding: 1px 5px; border-radius: var(--r-pill); }
+  .gnav .right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+  .gnav .pin { font-weight: var(--fw-bold); font-size: 14px; color: #fff; background: #2f6fed; border: 0; border-radius: 8px; padding: 9px 16px; cursor: pointer; }
+  .gnav .bell { position: relative; font-size: 20px; color: #6b7280; cursor: pointer; }
+  .gnav .bell .dot { position: absolute; top: -4px; right: -6px; background: var(--main-color); color: #fff; font-size: 10px; font-weight: 700; border-radius: 50%; width: 16px; height: 16px; display: grid; place-items: center; }
+  .gnav .logout { font-size: 15px; color: #374151; cursor: pointer; }
+  .gnav .lang { font-weight: var(--fw-bold); font-size: 12px; color: #fff; background: var(--main-color); border: 0; border-radius: var(--r-pill); padding: 6px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+
+  /* ===== 레이아웃 ===== */
+  .layout { display: flex; align-items: flex-start; }
+  /* 좌측 사이드바 */
+  .side { width: 200px; background: #fff; border-right: 1px solid var(--border); min-height: calc(100vh - 64px); padding: 22px 0; flex-shrink: 0; }
+  .side .sbrand { display: flex; align-items: center; gap: 7px; padding: 0 22px 18px; }
+  .side .sbrand .b { font-family: var(--font-en); font-weight: var(--fw-black); font-size: 22px; color: #2f6fed; }
+  .side .sbrand .b span { color: #1f2937; }
+  .side .stats { padding: 0 22px 16px; display: flex; flex-direction: column; gap: 7px; }
+  .side .stats .row { display: flex; justify-content: space-between; font-size: 13px; }
+  .side .stats .row .k { color: var(--fg-sub); } .side .stats .row .v { font-weight: var(--fw-bold); color: #374151; }
+  .side .sbtns { padding: 0 18px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .side .sbtns button { border: 0; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: var(--fw-bold); cursor: pointer; font-family: var(--font-kr); }
+  .side .sbtns .buy { background: #fb6f5f; color: #fff; }
+  .side .sbtns .pay { background: #e5e7eb; color: #4b5563; }
+  .side .snav { display: flex; flex-direction: column; padding-top: 6px; }
+  .side .snav a { padding: 11px 22px; font-size: 15px; color: #4b5563; cursor: pointer; border-left: 3px solid transparent; display: flex; align-items: center; gap: 6px; }
+  .side .snav a.on { color: var(--main-color); font-weight: var(--fw-bold); border-left-color: var(--main-color); background: #fff7f2; }
+  .side .snav a:hover { background: #f9fafb; }
+  .side .snav a .x { color: #ef4444; font-size: 12px; }
+
+  /* 중앙 콘텐츠 */
+  .center { flex: 1; padding: 28px 24px; min-width: 0; }
+  .profile { display: flex; align-items: center; gap: 22px; margin-bottom: 22px; }
+  .profile .avatar { width: 96px; height: 96px; border-radius: 50%; background: #e9edf2; display: grid; place-items: center; font-size: 40px; color: #9aa3af; flex-shrink: 0; }
+  .profile .pname { font-size: 22px; font-weight: var(--fw-bold); display: flex; align-items: center; gap: 8px; }
+  .profile .pname .cog { font-size: 15px; color: var(--fg-mute); cursor: pointer; }
+  .profile .pstats { display: flex; gap: 26px; margin-top: 10px; font-size: 15px; }
+  .profile .pstats b { font-weight: var(--fw-bold); }
+  .profile .pstats .lbl { color: var(--fg-sub); margin-right: 4px; }
+  .profile .follow { margin-left: auto; display: flex; gap: 40px; text-align: center; }
+  .profile .follow .k { color: var(--fg-sub); font-size: 14px; } .profile .follow .v { font-size: 22px; font-weight: var(--fw-bold); margin-top: 4px; }
+
+  .search { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; }
+  .search input { flex: 1; border: 0; outline: 0; font-size: 15px; font-family: var(--font-kr); color: var(--fg); background: transparent; }
+  .search .ic { color: var(--fg-mute); font-size: 18px; }
+
+  .toolbar { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; font-size: 14px; }
+  .toolbar .cat { color: var(--fg-sub); font-weight: var(--fw-semibold); }
+  .toolbar select { border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-family: var(--font-kr); font-size: 13px; }
+  .toolbar label { display: inline-flex; align-items: center; gap: 5px; color: var(--fg-sub); cursor: pointer; }
+  .toolbar .ans { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; color: var(--fg-sub); }
+  .toolbar .toggle { width: 38px; height: 20px; background: #d1d5db; border-radius: var(--r-pill); position: relative; }
+  .toolbar .toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; }
+
+  /* 콘텐츠 그리드 (2열: 카드 리스트 + 우측 퀴즈) */
+  .content { display: flex; gap: 20px; align-items: flex-start; }
+  .cards { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .addbox { height: 60px; background: #eef0f3; border-radius: 12px; display: grid; place-items: center; color: #9aa3af; font-size: 24px; cursor: pointer; }
+  .qcard { display: flex; gap: 16px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px; align-items: center; }
+  .qcard.active { border-color: var(--main-color); box-shadow: 0 0 0 1px var(--main-color); }
+  .qcard .qthumb { width: 150px; height: 90px; border-radius: 8px; background: linear-gradient(135deg, #fde68a, #fca5a5); flex-shrink: 0; }
+  .qcard .qthumb.p { background: linear-gradient(135deg, #fbcfe8, #f9a8d4); }
+  .qcard .qinfo { flex: 1; min-width: 0; }
+  .qcard .qcat { font-size: 12px; color: var(--fg-mute); margin-bottom: 5px; }
+  .qcard .qtitle { font-size: 16px; font-weight: var(--fw-bold); margin-bottom: 6px; display: flex; align-items: center; gap: 7px; }
+  .qcard .badge-draft { font-size: 11px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 2px 8px; border-radius: 5px; }
+  .qcard .badge-pub { font-size: 12px; color: var(--fg-sub); margin-left: 4px; }
+  .qcard .qmeta { font-size: 13px; color: var(--fg-sub); margin-bottom: 4px; }
+  .qcard .qmeta .heart { color: #f87171; }
+  .qcard .qauthor { font-size: 12px; color: var(--fg-mute); }
+  .qcard .qactions { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; align-self: stretch; }
+  .qcard .qactions .more { color: var(--fg-mute); cursor: pointer; font-size: 18px; }
+  .qcard .qactions .btns { display: flex; gap: 8px; }
+  .qcard .qactions .btns span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 15px; cursor: pointer; }
+  .qcard .qactions .btns .play { background: #6366f1; color: #fff; }
+  .qcard .qactions .btns .target { background: var(--main-color); color: #fff; }
+  .qcard .qactions .btns .edit { background: #4b5563; color: #fff; }
+
+  /* 우측 퀴즈 미리보기 */
+  .quizpanel { width: 360px; flex-shrink: 0; background: #fff; border: 1px solid var(--main-color); border-radius: 12px; padding: 18px; }
+  .quizpanel .qp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .quizpanel .qp-head .t { font-size: 16px; font-weight: var(--fw-bold); }
+  .quizpanel .qp-head .acts { display: flex; gap: 6px; }
+  .quizpanel .qp-head .acts button { border: 1px solid var(--main-color); color: var(--main-color); background: #fff; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: var(--fw-bold); cursor: pointer; font-family: var(--font-kr); }
+  .quizpanel .qp-illust { height: 110px; background: #f9fafb; border-radius: 10px; display: grid; place-items: center; color: #cbd5e1; font-weight: var(--fw-black); font-size: 18px; margin-bottom: 14px; }
+  .quizpanel .qp-sec { font-size: 13px; color: var(--fg-sub); margin-bottom: 6px; font-weight: var(--fw-bold); }
+  .quizpanel .qp-desc { font-size: 14px; color: #374151; line-height: 1.7; margin-bottom: 16px; }
+  .quizpanel .qp-q { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 8px; }
+  .quizpanel .qp-q .qh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .quizpanel .qp-q .qh .qn { font-size: 14px; font-weight: var(--fw-bold); }
+  .quizpanel .qp-q .qh .tag { font-size: 11px; color: var(--fg-sub); background: #f1f5f9; padding: 2px 8px; border-radius: 5px; }
+  .quizpanel .qp-q .opts { display: flex; gap: 16px; }
+  .quizpanel .qp-q .opts .o { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--fg-sub); }
+  .quizpanel .qp-q .opts .o .r { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #cbd5e1; }
+
+  .hint { margin-top: 18px; padding: 14px 18px; background: #fff7f2; border: 1px solid var(--main-color); border-radius: 12px; font-size: 14px; color: var(--fg-sub); display: flex; align-items: center; gap: 10px; }
+  .hint strong { color: var(--main-color); }
+</style>
+</head>
+<body>
+
+<!-- 상단 GNB -->
+<header class="gnav">
+  <div class="logo"><span class="mark">Quiz<span class="n">N</span></span><span class="ko">퀴즈앤</span></div>
+  <nav class="menu">
+    <a>만들기</a>
+    <a>찾아보기</a>
+    <a>Groups</a>
+    <a class="labs" onclick="goLabs()">Labs</a>
+  </nav>
+  <div class="right">
+    <button class="pin">Game PIN</button>
+    <span class="bell"><i class="icon-bell"></i><span class="dot">9</span></span>
+    <span class="logout" onclick="location.href='quizn-home.html'">로그아웃</span>
+    <button class="lang"><i class="icon-globe"></i> ENG</button>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- 좌측 사이드바 -->
+  <aside class="side">
+    <div class="sbrand"><span class="b">soft<span>N</span></span></div>
+    <div class="stats">
+      <div class="row"><span class="k">Play</span><span class="v">10명</span></div>
+      <div class="row"><span class="k">Mission</span><span class="v">10명</span></div>
+      <div class="row"><span class="k">Board</span><span class="v">10명</span></div>
+    </div>
+    <div class="sbtns">
+      <button class="buy">상품 신청</button>
+      <button class="pay">결제 내역</button>
+    </div>
+    <nav class="snav">
+      <a class="on">My Show</a>
+      <a>My Board</a>
+      <a>My Video</a>
+      <a>My Class <span class="x"><i class="icon-cancel"></i></span></a>
+      <a>My Box</a>
+      <a>Meme</a>
+      <a>Reports <i class="icon-up-open" style="font-size:11px;margin-left:auto"></i></a>
+      <a>휴지통</a>
+      <a>이용 안내</a>
+      <a>1:1 문의하기</a>
+      <a>Profile</a>
+    </nav>
+  </aside>
+
+  <!-- 중앙 콘텐츠 -->
+  <main class="center">
+    <div class="profile">
+      <div class="avatar"><i class="icon-user"></i></div>
+      <div>
+        <div class="pname">퀴잰용용 <span class="cog"><i class="icon-cog-1"></i></span></div>
+        <div class="pstats">
+          <span><span class="lbl">쇼</span><b>181</b></span>
+          <span><span class="lbl">Play</span><b>922</b></span>
+          <span><span class="lbl">좋아요</span><b>2</b></span>
+        </div>
+      </div>
+      <div class="follow">
+        <div><div class="k">팔로우</div><div class="v">6</div></div>
+        <div><div class="k">팔로잉</div><div class="v">4</div></div>
+      </div>
+    </div>
+
+    <div class="search">
+      <i class="icon-zoom-in ic"></i>
+      <input placeholder="Show 제목 또는 태그를 검색해 주세요.">
+    </div>
+
+    <div class="toolbar">
+      <span class="cat">⊞ 카테고리 : 전체</span>
+      <select><option>정렬기준</option></select>
+      <label><input type="checkbox" checked> 오름차순</label>
+      <label><input type="checkbox"> 내림차순</label>
+      <span class="ans">정답 표시 <span class="toggle"></span></span>
+    </div>
+
+    <div class="content">
+      <div class="cards">
+        <div class="addbox">+</div>
+        <div class="qcard active">
+          <div class="qthumb"></div>
+          <div class="qinfo">
+            <div class="qcat">⊞ 전체 <i class="icon-pencil2"></i></div>
+            <div class="qtitle"><span class="badge-draft">작성중</span> [소개] 반송중학교 연수</div>
+            <div class="qmeta">Q. 18문제 · 00:06:10 · ▶ 0 · <span class="heart">♥</span> 0</div>
+            <div class="qauthor">퀴잰용용 · 2026-05-20 10:31</div>
+          </div>
+          <div class="qactions"><span class="more">⋮</span><div class="btns"><span class="play">▶</span><span class="target"><i class="icon-target"></i></span><span class="edit"><i class="icon-pencil2"></i></span></div></div>
+        </div>
+        <div class="qcard">
+          <div class="qthumb"></div>
+          <div class="qinfo">
+            <div class="qcat">⊞ 전체 <i class="icon-pencil2"></i></div>
+            <div class="qtitle"><span class="badge-draft">작성중</span> 123</div>
+            <div class="qmeta">Q. 2문제 · 00:00:40 · ▶ 0 · <span class="heart">♥</span> 0 · <span class="badge-pub">공개</span></div>
+            <div class="qauthor">퀴잰용용 · 2026-05-07 21:14</div>
+          </div>
+          <div class="qactions"><span class="more">⋮</span><div class="btns"><span class="play">▶</span><span class="target"><i class="icon-target"></i></span><span class="edit"><i class="icon-pencil2"></i></span></div></div>
+        </div>
+        <div class="qcard">
+          <div class="qthumb"></div>
+          <div class="qinfo">
+            <div class="qcat">⊞ 전체 <i class="icon-pencil2"></i></div>
+            <div class="qtitle">APAC All-hands</div>
+            <div class="qmeta">Q. 31문제 · 00:15:30 · ▶ 1 · <span class="heart">♥</span> 0</div>
+            <div class="qauthor">퀴잰용용 · 2026-05-07 16:43</div>
+          </div>
+          <div class="qactions"><span class="more">⋮</span><div class="btns"><span class="play">▶</span><span class="target"><i class="icon-target"></i></span><span class="edit"><i class="icon-pencil2"></i></span></div></div>
+        </div>
+        <div class="qcard">
+          <div class="qthumb p"></div>
+          <div class="qinfo">
+            <div class="qcat">⊞ 전체 <i class="icon-pencil2"></i></div>
+            <div class="qtitle">초등 저학년 영어단어 1회</div>
+            <div class="qmeta">Q. 10문제 · 00:05:35 · ▶ 1 · <span class="heart">♥</span> 0 · <span class="badge-pub">공개</span></div>
+            <div class="qauthor">퀴잰용용 · 2026-04-21 14:53</div>
+          </div>
+          <div class="qactions"><span class="more">⋮</span><div class="btns"><span class="play">▶</span><span class="target"><i class="icon-target"></i></span><span class="edit"><i class="icon-pencil2"></i></span></div></div>
+        </div>
+      </div>
+
+      <!-- 우측 퀴즈 미리보기 -->
+      <aside class="quizpanel">
+        <div class="qp-head">
+          <span class="t">퀴즈 : 총 18문제</span>
+          <div class="acts"><button>Play</button><button>Mission</button></div>
+        </div>
+        <div class="qp-illust">SHOW!</div>
+        <div class="qp-sec">[설명]</div>
+        <div class="qp-desc">반갑습니다.<br>저는 퀴즈앤 마케팅 사업부 이가영 과장입니다.</div>
+        <div class="qp-q">
+          <div class="qh"><span class="qn">[퀴즈1]</span><span class="tag">선택형</span></div>
+          <div class="opts"><span class="o"><span class="r"></span> 1</span><span class="o"><span class="r"></span> 2</span></div>
+        </div>
+        <div class="qp-q">
+          <div class="qh"><span class="qn">[퀴즈2]</span><span class="tag">선택형</span></div>
+          <div class="opts"><span class="o"><span class="r"></span> 1</span><span class="o"><span class="r"></span> 2</span></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="hint">
+      <i class="icon-attention-alt-1"></i>
+      <span>상단 GNB의 <strong>Labs</strong> 메뉴를 클릭하면 SoftN Labs(신기능 실험실) 접속 인가 화면으로 이동합니다.</span>
+    </div>
+  </main>
+</div>
+
+<script>
+  // QuizN 계정 (닉네임·아이디) — Labs 접속 시 인가 화면·헤더로 전달
+  var QUIZN_ACCOUNT = { nick: '퀴잰용용', id: 'quizn_yong' };
+  function goLabs() {
+    try { localStorage.setItem('quizn_account', JSON.stringify(QUIZN_ACCOUNT)); } catch (e) {}
+    location.href = 'labs-auth.html';
+  }
+</script>
+
+</body>
+</html>
