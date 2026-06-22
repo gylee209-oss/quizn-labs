@@ -7,61 +7,67 @@
 
 const MODELS = [
   {
-    key: 'media_teller', name: '미디어텔러', status: 'beta', statusKo: '베타',
+    key: 'media_teller', name: '미디어텔러', status: 'beta', statusKo: '베타', category: 'ext',
     rating: 4.32, count: 127, version: '1.4.0', versions: 5, updated: '2026-05-20', posts: 84, commentCount: 312,
     desc: 'AI가 영상에서 핵심 장면만 추려 요약 영상을 만들어주는 도구. 유튜브, 강의, 회의 녹화에 모두 적용 가능합니다.',
     dist: { 5: 59, 4: 42, 3: 18, 2: 5, 1: 3 }
   },
   {
-    key: 'debate', name: '토론 시스템', status: 'live', statusKo: '정식',
+    key: 'debate', name: '토론 시스템', status: 'live', statusKo: '정식', category: 'ext',
     rating: 4.71, count: 312, version: '2.1.0', versions: 8, updated: '2026-05-28', posts: 156, commentCount: 540,
     desc: '주제 하나에 다중 시점 의견을 트리로 정리해 보는 실험. 찬반·중립 논거를 한눈에 비교합니다.',
     dist: { 5: 210, 4: 70, 3: 22, 2: 6, 1: 4 }
   },
   {
-    key: 'dbms_manager', name: 'DBMS 매니저', status: 'beta', statusKo: '베타',
+    key: 'dbms_manager', name: 'DBMS 매니저', status: 'hold', statusKo: '보류', category: 'idea',
     rating: 3.95, count: 48, version: '0.9.2', versions: 3, updated: '2026-05-12', posts: 31, commentCount: 95,
     desc: '여러 DB 인스턴스를 통합 관리하는 어드민(실험 중). MySQL, PostgreSQL을 한 화면에서 다룹니다.',
     dist: { 5: 18, 4: 16, 3: 9, 2: 3, 1: 2 }
   },
   {
-    key: 'erd_v2', name: 'ERD 디자인 v2', status: 'archived', statusKo: '보관',
+    key: 'erd_v2', name: 'ERD 디자인 v2', status: 'archived', statusKo: '보관', category: 'idea',
     rating: 4.10, count: 89, version: '1.0.0', versions: 4, updated: '2026-03-30', posts: 52, commentCount: 140,
     desc: '관계형 스키마 시각 편집 + DDL 자동 생성. 보관 단계로 곧 신규 버전으로 대체됩니다.',
     dist: { 5: 40, 4: 28, 3: 14, 2: 4, 1: 3 }
   },
   {
-    key: 'prompt_lab', name: '프롬프트 랩', status: 'live', statusKo: '정식',
+    key: 'prompt_lab', name: '프롬프트 랩', status: 'live', statusKo: '정식', category: 'idea',
     rating: 4.55, count: 201, version: '1.8.0', versions: 6, updated: '2026-05-25', posts: 110, commentCount: 388,
     desc: '동일 입력에 대해 여러 LLM의 응답을 나란히 비교하는 워크벤치. 프롬프트 버전 관리도 지원합니다.',
     dist: { 5: 130, 4: 48, 3: 15, 2: 5, 1: 3 }
   },
   {
-    key: 'code_archio', name: '코드 아키오', status: 'beta', statusKo: '베타',
+    key: 'code_archio', name: '코드 아키오', status: 'beta', statusKo: '베타', category: 'idea',
     rating: 4.20, count: 76, version: '0.6.0', versions: 2, updated: '2026-05-08', posts: 40, commentCount: 122,
     desc: '오래된 코드베이스의 의도와 변화 흐름을 자연어로 설명해주는 분석 도구. 신규 합류자 온보딩에 유용합니다.',
     dist: { 5: 38, 4: 24, 3: 9, 2: 3, 1: 2 }
   },
   {
-    key: 'notion_bridge', name: '노션 브릿지', status: 'live', statusKo: '정식',
+    key: 'notion_bridge', name: '노션 브릿지', status: 'live', statusKo: '정식', category: 'ext',
     rating: 4.63, count: 158, version: '1.5.0', versions: 5, updated: '2026-05-22', posts: 88, commentCount: 274,
     desc: '노션 DB를 BlogN 포스트로 양방향 동기화하는 업데이트. 작가가 노션에서 쓰면 블로그에 그대로 반영됩니다.',
     dist: { 5: 100, 4: 38, 3: 13, 2: 4, 1: 3 }
   },
   {
-    key: 'voice_memo', name: '보이스 메모 to 글', status: 'beta', statusKo: '베타',
+    key: 'voice_memo', name: '보이스 메모 to 글', status: 'beta', statusKo: '베타', category: 'idea',
     rating: 4.08, count: 64, version: '0.7.1', versions: 3, updated: '2026-05-02', posts: 36, commentCount: 108,
     desc: '음성 메모를 받아 글 초안으로 변환. 화자별 분리, 핵심 자동 요약, 자동 문단 정리를 제공합니다.',
     dist: { 5: 30, 4: 20, 3: 9, 2: 3, 1: 2 }
   }
 ];
 
-const STATUS_KO = { beta: '베타', live: '정식', archived: '보관' };
+const STATUS_KO = { beta: '베타', live: '정식', hold: '보류', archived: '보관' };
+
+// 카테고리 (모델 분류) — 키:한글
+const CATEGORY_KO = { ext: '퀴즈앤 확장기능', idea: '아이디어' };
+
+// 비활성 상태(보류·보관): 참여·의견 불가, '진행 중' 카운트 제외
+function isInactiveStatus(s) { return s === 'hold' || s === 'archived'; }
 
 // 권한 관리용 사용자 더미 (Staff 전용 화면) — 닉네임·이메일 기준, 소속은 빈칸
 const ROLE_KO = { guest: '비로그인', member: '일반', staff: '운영' };
 const USERS = [
-  { nick: '퀴잰용용', email: 'quizn_yong@quizn.app', org: '', role: 'staff', me: true },
+  { nick: '퀴잰용용', email: 'gy.lee@softn.kr', org: '', role: 'staff', me: true },
   { nick: '하늘다람쥐', email: 'sky.squirrel@quizn.app', org: '', role: 'staff' },
   { nick: '민트초코', email: 'mint.choco@quizn.app', org: '', role: 'member' },
   { nick: '구름빵', email: 'cloud.bread@quizn.app', org: '', role: 'member' },

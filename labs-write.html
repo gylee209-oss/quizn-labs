@@ -33,7 +33,14 @@
       <div class="radio-row">
         <label class="radio-item"><input type="radio" name="m-status" value="beta" checked> 베타</label>
         <label class="radio-item"><input type="radio" name="m-status" value="live"> 정식</label>
+        <label class="radio-item"><input type="radio" name="m-status" value="hold"> 보류</label>
         <label class="radio-item"><input type="radio" name="m-status" value="archived"> 보관</label>
+      </div>
+    </div>
+    <div class="lm-field"><label>카테고리 <span class="req">필수</span></label>
+      <div class="radio-row">
+        <label class="radio-item"><input type="radio" name="m-category" value="ext" checked> 퀴즈앤 확장기능</label>
+        <label class="radio-item"><input type="radio" name="m-category" value="idea"> 아이디어</label>
       </div>
     </div>
     <div class="lm-field"><label>모델명 <span class="req">필수</span></label><input class="lm-input" id="m-name" placeholder="예: 토론 시스템" maxlength="40" autocomplete="off"></div>
@@ -67,7 +74,7 @@
 <div id="footer-slot"></div>
 <div id="gate-slot"></div>
 
-<script src="./labs.js?v=20260617"></script>
+<script src="./labs.js?v=20260618"></script>
 <script>
   document.getElementById('header-slot').outerHTML = headerHTML();
   document.getElementById('gate-slot').outerHTML = gateHTML();
@@ -85,6 +92,7 @@
       key: document.getElementById('m-key').value,
       desc: document.getElementById('m-desc').value,
       status: (document.querySelector('input[name="m-status"]:checked') || {}).value,
+      category: (document.querySelector('input[name="m-category"]:checked') || {}).value,
       link: (document.querySelector('input[name="m-link"]:checked') || {}).value,
       url: document.getElementById('m-url').value
     };
@@ -96,6 +104,7 @@
     document.getElementById('m-desc').value = d.desc || '';
     document.getElementById('m-url').value = d.url || '';
     if (d.status) { const s = document.querySelector('input[name="m-status"][value="' + d.status + '"]'); if (s) s.checked = true; }
+    if (d.category) { const c = document.querySelector('input[name="m-category"][value="' + d.category + '"]'); if (c) c.checked = true; }
     if (d.link) { const l = document.querySelector('input[name="m-link"][value="' + d.link + '"]'); if (l) l.checked = true; }
   }
 
@@ -108,7 +117,7 @@
         let m = null;
         try { m = JSON.parse(localStorage.getItem('labs_custom_models') || '[]').find(x => x.key === editKey); } catch (e) {}
         if (m) {
-          restore({ name: m.name, key: m.key, desc: m.desc, status: m.status, link: m.link || 'none', url: m.url || '' });
+          restore({ name: m.name, key: m.key, desc: m.desc, status: m.status, category: m.category || 'ext', link: m.link || 'none', url: m.url || '' });
           document.querySelector('.write-title').textContent = '모델 수정';
           document.getElementById('w-submit').textContent = '수정 완료';
           toastText('등록한 모델을 수정합니다');
@@ -166,6 +175,7 @@
     const base = existing || { rating: 0, count: 0, version: '0.1.0', versions: 1, posts: 0, commentCount: 0, dist: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } };
     customs.unshift(Object.assign({}, base, {
       key: d.key.trim(), name: d.name.trim(), status: d.status, statusKo: STATUS_KO[d.status],
+      category: d.category || 'ext',
       desc: d.desc.trim() || '새로 등록된 모델입니다.', link: d.link, url: d.url,
       updated: new Date().toISOString().slice(0, 10)
     }));

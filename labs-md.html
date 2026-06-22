@@ -175,6 +175,7 @@ body {
   font-size: 13px; line-height: 2;
   color: #cbd5e1;
   overflow-x: auto;
+  white-space: pre;
 }
 .file-tree .dir { color: #60a5fa; font-weight: 700; }
 .file-tree .file { color: #86efac; }
@@ -350,6 +351,7 @@ ul li strong { color: #1e40af; }
   padding: 24px 28px; margin: 16px 0;
   font-family: 'SF Mono', Consolas, monospace;
   font-size: 13px; line-height: 2; color: #cbd5e1;
+  white-space: pre; overflow-x: auto;
 }
 .layout-diagram .ld-root { color: #60a5fa; }
 .layout-diagram .ld-a   { color: #2563eb; font-weight: 700; }
@@ -484,7 +486,7 @@ ul li strong { color: #1e40af; }
   <section class="section" id="overview">
     <h2 class="section-title"><span class="icon">📋</span> 프로젝트 개요</h2>
     <div class="card">
-      <p style="margin:0 0 16px;"><strong>SoftN Labs</strong>는 QuizN의 실험적 기능·프로토타입을 모아 사용자 피드백(평점·댓글)을 받는 <strong>독립 포털</strong>이다. 기존 QuizN(민트/주황)과 별개의 <strong>파란 액센트 + 다크모드</strong> 디자인 시스템을 쓴다.</p>
+      <p style="margin:0 0 16px;"><strong>SoftN Labs</strong>는 QuizN의 실험적 기능·프로토타입을 모아 사용자 의견(평점·의견)을 받는 <strong>독립 포털</strong>이다. 기존 QuizN(민트/주황)과 별개의 <strong>파란 액센트 + 다크모드</strong> 디자인 시스템을 쓴다.</p>
       <p style="margin:0;">프레임워크 없이 <strong>vanilla JS + CSS 변수</strong>로만 구현하며, 로그인·권한·모델 등록을 <code>localStorage</code> 기반으로 시뮬레이션하는 정적 시안이다.</p>
       <div class="status-row" style="margin-top:24px;">
         <span class="status-badge beta">● 베타</span>
@@ -510,7 +512,7 @@ ul li strong { color: #1e40af; }
     ├── <span class="dir">fonts/</span>                    <span class="comment"># HGGGothicssi(브랜드) + fontello(아이콘)</span>
     ├── <span class="file">index.html</span>             <span class="comment"># 루트 → labs.html 리다이렉트</span>
     ├── <span class="file star">★ labs.html</span>            <span class="comment"># 모델 목록 (검색·필터·정렬·카드 8개 페이지네이션)</span>
-    ├── <span class="file">labs-detail.html</span>      <span class="comment"># 모델 상세 (피드백·평점분포·배포이력)</span>
+    ├── <span class="file">labs-detail.html</span>      <span class="comment"># 모델 상세 (의견·평점분포·배포이력)</span>
     ├── <span class="file">labs-write.html</span>       <span class="comment"># 모델 등록·수정 (Staff 전용)</span>
     ├── <span class="file">labs-admin.html</span>       <span class="comment"># 권한 관리 (Staff 전용)</span>
     ├── <span class="file">quizn-home.html</span>       <span class="comment"># QuizN 메인 (비로그인 진입점, SHOW 주황)</span>
@@ -532,7 +534,7 @@ ul li strong { color: #1e40af; }
       <ul>
         <li><strong>모든 색상은 CSS 변수로만</strong> 참조. 하드코딩은 <code>labs.css</code> 토큰 정의부에만.</li>
         <li>두 세트: <code>:root</code>(라이트) / <code>[data-mode="dark"]</code>(다크). FOUC 방지로 <code>&lt;head&gt;</code>에서 즉시 적용.</li>
-        <li>액센트는 파란 <code>--accent: #2563eb</code> (로고·뱃지·버튼·활성 필터·내 평점).</li>
+        <li>액센트는 파란 <code>--accent: #2563eb</code> (로고·뱃지·버튼·활성 필터·내 참여).</li>
       </ul>
       <div class="token-grid" style="margin-top:20px;">
         <div class="token-item">
@@ -599,7 +601,7 @@ ul li strong { color: #1e40af; }
         </div>
         <div class="role-card member">
           <div class="role-head">일반 <span class="role-tag">member</span></div>
-          <p>모델 확인·댓글·좋아요·평점 가능. <code>new-post</code>·"관리" 메뉴 숨김.</p>
+          <p>모델 확인·의견·좋아요·평점 가능. <code>new-post</code>·"관리" 메뉴 숨김.</p>
         </div>
         <div class="role-card staff">
           <div class="role-head">운영 <span class="role-tag">staff</span></div>
@@ -619,19 +621,113 @@ ul li strong { color: #1e40af; }
   <section class="section" id="flow">
     <h2 class="section-title"><span class="icon">🚪</span> QuizN 계정 인가 플로우</h2>
     <div class="card">
-      <div class="flow">
-        <div class="flow-step"><span class="fs-file">quizn-home.html</span><span class="fs-desc">비로그인 메인 · "만들기"</span></div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step"><span class="fs-file">myshow.html</span><span class="fs-desc">My Show · GNB "Labs[NEW]"</span></div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step"><span class="fs-file">labs-auth.html</span><span class="fs-desc">계정 인가 "접속"</span></div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step"><span class="fs-file">labs.html</span><span class="fs-desc">Labs 목록</span></div>
+      <style>
+        .pf-tabs { display:flex; gap:6px; border-bottom:1px solid #e2e8f0; margin-bottom:20px; flex-wrap:wrap; }
+        .pf-tab {
+          appearance:none; border:0; background:transparent; cursor:pointer;
+          font-family:'Noto Sans KR',sans-serif; font-size:13.5px; font-weight:700; color:#64748b;
+          padding:10px 16px; border-bottom:2px solid transparent; margin-bottom:-1px; border-radius:6px 6px 0 0;
+          display:inline-flex; align-items:center; gap:7px;
+        }
+        .pf-tab:hover { color:#2563eb; background:#f8fafc; }
+        .pf-tab.active { color:#2563eb; border-bottom-color:#2563eb; }
+        .pf-tab .pf-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+        .pf-tab .pf-dot.guest  { background:#9ca3af; }
+        .pf-tab .pf-dot.member { background:#3b82f6; }
+        .pf-tab .pf-dot.staff  { background:#1e3a8a; }
+        .pf-pane { display:none; }
+        .pf-pane.active { display:block; animation:pfFade .25s ease; }
+        @keyframes pfFade { from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+        .pf-row { display:flex; align-items:center; gap:0; flex-wrap:wrap; row-gap:18px; }
+        .pf-shot {
+          flex:0 0 auto; width:190px; text-decoration:none; display:block;
+          border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; background:#fff;
+          box-shadow:0 1px 4px rgba(15,23,42,0.05); transition:all .15s;
+        }
+        .pf-shot:hover { border-color:#93c5fd; box-shadow:0 4px 14px rgba(37,99,235,0.15); transform:translateY(-2px); }
+        .pf-shot .pf-thumb { position:relative; width:190px; height:120px; background:#f1f5f9; overflow:hidden; }
+        .pf-shot .pf-thumb img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
+        .pf-shot .pf-step {
+          position:absolute; top:8px; left:8px; width:22px; height:22px; border-radius:50%;
+          background:#2563eb; color:#fff; font-family:'Montserrat',sans-serif; font-weight:800; font-size:11px;
+          display:grid; place-items:center; box-shadow:0 1px 3px rgba(0,0,0,0.2);
+        }
+        .pf-shot .pf-cap { padding:9px 11px 11px; }
+        .pf-shot .pf-name { font-family:'SF Mono',Consolas,monospace; font-size:11px; font-weight:700; color:#1e293b; }
+        .pf-shot .pf-desc { font-size:11px; color:#64748b; margin-top:3px; line-height:1.45; }
+        .pf-arrow { flex:0 0 auto; padding:0 8px; color:#94a3b8; font-size:18px; font-weight:700; align-self:center; }
+        .pf-note {
+          margin-top:18px; background:#eff6ff; border-left:4px solid #2563eb; border-radius:0 8px 8px 0;
+          padding:12px 16px; font-size:12.5px; color:#475569; line-height:1.7;
+        }
+        .pf-note.staff { background:#f5f3ff; border-left-color:#1e3a8a; }
+        .pf-note.guest { background:#fffbeb; border-left-color:#f59e0b; color:#92400e; }
+        .pf-hint { font-size:11px; color:#94a3b8; margin:0 0 14px; }
+        @media (max-width:680px){ .pf-arrow{ transform:rotate(90deg); width:100%; text-align:center; padding:2px 0; } .pf-shot{ width:100%; } .pf-shot .pf-thumb{ width:100%; height:150px; } }
+      </style>
+
+      <div class="pf-tabs" role="tablist">
+        <button class="pf-tab active" data-pane="pf-guest"><span class="pf-dot guest"></span>비로그인</button>
+        <button class="pf-tab" data-pane="pf-member"><span class="pf-dot member"></span>로그인 · 멤버</button>
+        <button class="pf-tab" data-pane="pf-staff"><span class="pf-dot staff"></span>로그인 · 운영자</button>
       </div>
+      <p class="pf-hint">썸네일을 클릭하면 실제 화면이 새 탭으로 열립니다. (캡처: flow-shots/)</p>
+
+      <!-- 비로그인 -->
+      <div class="pf-pane active" id="pf-guest">
+        <div class="pf-row">
+          <a class="pf-shot" href="quizn-home.html" target="_blank"><div class="pf-thumb"><span class="pf-step">1</span><img src="flow-shots/g1-home.png" alt="QuizN 메인"></div><div class="pf-cap"><div class="pf-name">quizn-home</div><div class="pf-desc">비로그인 첫 화면 · 만들기</div></div></a>
+          <span class="pf-arrow">→</span>
+          <a class="pf-shot" href="myshow.html" target="_blank"><div class="pf-thumb"><span class="pf-step">2</span><img src="flow-shots/g2-myshow.png" alt="My Show"></div><div class="pf-cap"><div class="pf-name">myshow</div><div class="pf-desc">로그인 후 · GNB "Labs"</div></div></a>
+          <span class="pf-arrow">→</span>
+          <a class="pf-shot" href="labs-auth.html" target="_blank"><div class="pf-thumb"><span class="pf-step">3</span><img src="flow-shots/g3-auth.png" alt="Labs 접속 인가"></div><div class="pf-cap"><div class="pf-name">labs-auth</div><div class="pf-desc">계정 인가 "접속"</div></div></a>
+          <span class="pf-arrow">→</span>
+          <a class="pf-shot" href="labs.html" target="_blank"><div class="pf-thumb"><span class="pf-step">4</span><img src="flow-shots/g4-labs-gate.png" alt="Labs 잠금"></div><div class="pf-cap"><div class="pf-name">labs.html 🔒</div><div class="pf-desc">비로그인 = 잠금 게이트</div></div></a>
+        </div>
+        <div class="pf-note guest">비로그인 상태로 <code>labs.html</code>을 직접 열면 게이트가 콘텐츠를 가립니다. ①~③ 인가 경로를 거쳐 <code>labs_auth='member'</code>가 되어야 목록이 열립니다.</div>
+      </div>
+
+      <!-- 멤버 -->
+      <div class="pf-pane" id="pf-member">
+        <div class="pf-row">
+          <a class="pf-shot" href="labs.html" target="_blank"><div class="pf-thumb"><span class="pf-step">1</span><img src="flow-shots/m1-labs.png" alt="Labs 목록 (멤버)"></div><div class="pf-cap"><div class="pf-name">labs.html</div><div class="pf-desc">모델 목록 · 관리·새 모델 버튼 없음</div></div></a>
+          <span class="pf-arrow">→</span>
+          <a class="pf-shot" href="labs-detail.html?model=debate" target="_blank"><div class="pf-thumb"><span class="pf-step">2</span><img src="flow-shots/m2-detail.png" alt="모델 상세 (멤버)"></div><div class="pf-cap"><div class="pf-name">labs-detail</div><div class="pf-desc">평점·의견·투표 참여 가능</div></div></a>
+        </div>
+        <div class="pf-note">게이트 해제 후 목록·상세를 열람하고 의견·좋아요·평점을 남길 수 있습니다. 헤더의 Member/Staff 토글은 보이지만 <strong>새 모델 등록·관리 메뉴는 숨겨집니다.</strong></div>
+      </div>
+
+      <!-- 운영자 -->
+      <div class="pf-pane" id="pf-staff">
+        <div class="pf-row">
+          <a class="pf-shot" href="labs.html" target="_blank"><div class="pf-thumb"><span class="pf-step">1</span><img src="flow-shots/s1-labs.png" alt="Labs 목록 (운영자)"></div><div class="pf-cap"><div class="pf-name">labs.html</div><div class="pf-desc">+ 새 모델 등록 · 헤더 "관리" 노출</div></div></a>
+          <span class="pf-arrow">→</span>
+          <a class="pf-shot" href="labs-detail.html?model=debate" target="_blank"><div class="pf-thumb"><span class="pf-step">2</span><img src="flow-shots/s2-detail.png" alt="모델 상세 (운영자)"></div><div class="pf-cap"><div class="pf-name">labs-detail</div><div class="pf-desc">등록 모델은 수정·삭제 가능</div></div></a>
+          <span class="pf-arrow">→</span>
+          <a class="pf-shot" href="labs-write.html" target="_blank"><div class="pf-thumb"><span class="pf-step">3</span><img src="flow-shots/s3-write.png" alt="모델 등록"></div><div class="pf-cap"><div class="pf-name">labs-write</div><div class="pf-desc">새 모델 등록 · 수정 (STAFF)</div></div></a>
+          <span class="pf-arrow">→</span>
+          <a class="pf-shot" href="labs-admin.html" target="_blank"><div class="pf-thumb"><span class="pf-step">4</span><img src="flow-shots/s4-admin.png" alt="권한 관리"></div><div class="pf-cap"><div class="pf-name">labs-admin</div><div class="pf-desc">권한 관리 (STAFF)</div></div></a>
+        </div>
+        <div class="pf-note staff">멤버 권한 전부에 더해 운영 기능이 열립니다 — 새 모델 등록(<code>labs-write</code>), 헤더 "관리"(<code>labs-admin</code>), 등록 모델 수정·삭제. <code>isStaff()</code> = <code>labs_auth==='staff'</code>일 때만 노출됩니다.</div>
+      </div>
+
+      <script>
+        (function(){
+          var tabs = document.querySelectorAll('.pf-tab');
+          tabs.forEach(function(t){
+            t.addEventListener('click', function(){
+              tabs.forEach(function(x){ x.classList.remove('active'); });
+              t.classList.add('active');
+              document.querySelectorAll('.pf-pane').forEach(function(p){ p.classList.remove('active'); });
+              document.getElementById(t.dataset.pane).classList.add('active');
+            });
+          });
+        })();
+      </script>
       <ul style="margin-top:12px;">
         <li><code>myshow.goLabs()</code>: <code>quizn_account = {nick:'퀴잰용용', id:'quizn_yong'}</code>를 <code>localStorage</code>에 저장 후 labs-auth로 이동.</li>
         <li><code>labs-auth</code>: <code>quizn_account</code>를 읽어 계정 표시 → "접속" 시 <code>labs_auth='member'</code> 설정 후 labs.html.</li>
-        <li><strong><code>quizn_account = {nick, id}</code>는 계정 정체성 단일 소스</strong> — 헤더 아바타/이름, 권한관리의 "나" 행으로 전파(없으면 기본 '서도영').</li>
+        <li><strong><code>quizn_account = {nick, id}</code>는 계정 정체성 단일 소스</strong> — 헤더 아바타/이름, 권한관리의 "나" 행으로 전파(없으면 기본 '퀴잰용용').</li>
       </ul>
     </div>
   </section>
@@ -647,7 +743,7 @@ ul li strong { color: #1e40af; }
           <li>헤더(주입) + 히어로 + 컨트롤 바(검색·상태 필터 칩·정렬) + 모델 카드 그리드(4열).</li>
           <li><code>VIEW_MODELS = customModels.concat(MODELS)</code> — 등록 모델이 목록 상단에. <strong>카드 8개씩 페이지네이션</strong>(<code>PER_PAGE=8</code>).</li>
           <li>카드: 상태 뱃지 + 썸네일(사선+PRODUCT SHOT+이니셜) + 모델명 + 설명 + 별점 + 외부링크. 클릭 → <code>labs-detail.html?model={key}</code>.</li>
-          <li>정렬: 최신 수정순 / 평점순 / 평가 많은순 / 이름순.</li>
+          <li>정렬: 최근 업데이트 / 평점순 / 참여 많은순 / 이름순.</li>
         </ul>
         <table class="model-table" style="margin-top:8px;">
           <thead><tr><th>모델</th><th>key</th><th>상태</th></tr></thead>
@@ -670,10 +766,10 @@ ul li strong { color: #1e40af; }
       <div class="pattern-box-body">
         <ul>
           <li>breadcrumb + 좌측 큰 썸네일 / 우측 상태·모델명·키 코드칩·설명·데모 버튼.</li>
-          <li>통계 3분할(평균 평점 / 배포 버전 / 활동) + 평점 분포 막대 + <strong>내 평점</strong>(별 클릭 입력).</li>
-          <li>탭: 피드백(댓글+별점·페이지네이션) · 공지 · 투표 · 배포 이력.</li>
+          <li>통계 3분할(호응도 / 배포 / 의견) + 평점 분포 막대 + <strong>내 참여</strong>(별 클릭 입력).</li>
+          <li>탭: 의견(의견+별점·페이지네이션) · 공지 · 투표 · 배포 이력.</li>
           <li><strong>연결방식(link) 규칙</strong>: <code>none</code>→데모 버튼 숨김 / <code>trial</code>→"체험하기" / 그 외→"외부 데모 열기".</li>
-          <li>댓글: 본인(<code>name==='나'</code>)만 수정(인라인)·삭제(<code>showConfirm</code> 커스텀 모달). <code>textContent</code> 조립(XSS 방지) + IME <code>isComposing</code> 가드.</li>
+          <li>의견: 본인(<code>name==='나'</code>)만 수정(인라인)·삭제(<code>showConfirm</code> 커스텀 모달). <code>textContent</code> 조립(XSS 방지) + IME <code>isComposing</code> 가드.</li>
           <li>Staff && <code>isCustomModel</code> → 우상단 owner-actions(수정·삭제) 노출.</li>
         </ul>
       </div>

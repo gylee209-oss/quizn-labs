@@ -33,7 +33,7 @@
   <div class="labs-caution">
     <i class="icon-attention-alt-1 ci"></i>
     <ul>
-      <li><strong>정식 출시 전</strong>까지 사용자가 제작한 데이터(설정·평가·댓글 등)는 사전 고지 후 초기화되거나 삭제될 수 있습니다.</li>
+      <li><strong>정식 출시 전</strong>까지 사용자가 제작한 데이터(설정·참여·의견 등)는 사전 고지 후 초기화되거나 삭제될 수 있습니다.</li>
       <li>정식 출시가 확정되기 전까지 작성한 데이터의 <strong>보존 및 타 서비스 연계(연동)는 지원하지 않습니다.</strong></li>
     </ul>
   </div>
@@ -45,11 +45,16 @@
     </div>
     <div class="filter-chips" id="filter-chips"></div>
     <select class="sort" id="sort">
-      <option value="updated">최신 수정순</option>
+      <option value="updated">최근 업데이트</option>
       <option value="rating">평점 높은순</option>
-      <option value="count">평가 많은순</option>
+      <option value="count">참여 많은순</option>
       <option value="name">이름순</option>
     </select>
+  </div>
+
+  <div class="cat-filter">
+    <span class="cat-filter-label">카테고리</span>
+    <div class="filter-chips" id="cat-chips"></div>
   </div>
 
   <div class="section-title">
@@ -68,7 +73,7 @@
 <!-- 게이트 (labs.js가 주입) -->
 <div id="gate-slot"></div>
 
-<script src="./labs.js?v=20260617"></script>
+<script src="./labs.js?v=20260618"></script>
 <script>
   // 헤더·게이트 주입
   document.getElementById('header-slot').outerHTML = headerHTML();
@@ -94,11 +99,12 @@
     all: VIEW_MODELS.length,
     beta: VIEW_MODELS.filter(m => m.status === 'beta').length,
     live: VIEW_MODELS.filter(m => m.status === 'live').length,
+    hold: VIEW_MODELS.filter(m => m.status === 'hold').length,
     archived: VIEW_MODELS.filter(m => m.status === 'archived').length
   };
   const CHIP_DEFS = [
     { key: 'all', label: '전체' }, { key: 'beta', label: '베타' },
-    { key: 'live', label: '정식' }, { key: 'archived', label: '보관' }
+    { key: 'live', label: '정식' }, { key: 'hold', label: '보류' }, { key: 'archived', label: '보관' }
   ];
   CHIP_DEFS.forEach(def => {
     const chip = el('button', 'chip' + (def.key === 'all' ? ' active' : ''));
@@ -111,6 +117,32 @@
       render();
     });
     chipsEl.append(chip);
+  });
+
+  // 카테고리 필터 칩 (별도 줄)
+  let activeCat = 'all';
+  const catChipsEl = document.getElementById('cat-chips');
+  const catCounts = {
+    all: VIEW_MODELS.length,
+    ext: VIEW_MODELS.filter(m => m.category === 'ext').length,
+    idea: VIEW_MODELS.filter(m => m.category === 'idea').length
+  };
+  const CAT_DEFS = [
+    { key: 'all', label: '전체' },
+    { key: 'ext', label: CATEGORY_KO.ext },
+    { key: 'idea', label: CATEGORY_KO.idea }
+  ];
+  CAT_DEFS.forEach(def => {
+    const chip = el('button', 'chip' + (def.key === 'all' ? ' active' : ''));
+    chip.append(document.createTextNode(def.label), Object.assign(el('span', 'c-cnt'), { textContent: catCounts[def.key] }));
+    chip.addEventListener('click', () => {
+      activeCat = def.key;
+      cardPage = 0;
+      catChipsEl.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      render();
+    });
+    catChipsEl.append(chip);
   });
 
   document.getElementById('total-count').textContent = VIEW_MODELS.length;
@@ -127,6 +159,7 @@
     );
 
     const body = el('div', 'mc-body');
+    if (m.category && CATEGORY_KO[m.category]) body.append(el('span', 'mc-cat', CATEGORY_KO[m.category]));
     body.append(el('h3', 'mc-name', m.name), el('p', 'mc-desc', m.desc));
 
     const foot = el('div', 'mc-foot');
@@ -147,6 +180,7 @@
   function render() {
     const q = searchEl.value.trim().toLowerCase();
     let list = VIEW_MODELS.filter(m => activeFilter === 'all' || m.status === activeFilter);
+    list = list.filter(m => activeCat === 'all' || m.category === activeCat);
     if (q) list = list.filter(m => m.name.toLowerCase().includes(q));
 
     const sort = sortEl.value;
@@ -171,7 +205,7 @@
     }
     renderPager(pagerEl, list.length, PER_PAGE, cardPage, p => { cardPage = p; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
-    const active = VIEW_MODELS.filter(m => m.status !== 'archived').length;
+    const active = VIEW_MODELS.filter(m => !isInactiveStatus(m.status)).length;
     document.getElementById('active-count').textContent = '// ' + active + ' active';
   }
 
