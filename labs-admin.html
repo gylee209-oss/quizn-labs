@@ -44,6 +44,8 @@
     <div class="lm-body">
       <div class="lm-field"><label for="am-nick">닉네임</label><input class="lm-input" type="text" id="am-nick" placeholder="닉네임" autocomplete="off"></div>
       <div class="lm-field"><label for="am-email">이메일</label><input class="lm-input" type="email" id="am-email" placeholder="name@quizn.app" autocomplete="off"></div>
+      <div class="lm-field"><label for="am-pw">비밀번호</label><input class="lm-input" type="password" id="am-pw" placeholder="8자 이상 입력" autocomplete="new-password"></div>
+      <div class="lm-field"><label for="am-pw2">비밀번호 확인</label><input class="lm-input" type="password" id="am-pw2" placeholder="비밀번호를 다시 입력" autocomplete="new-password"></div>
       <div class="lm-field"><label for="am-role">역할</label>
         <select class="lm-input" id="am-role"><option value="member">일반</option><option value="staff">운영</option></select>
       </div>
@@ -157,8 +159,10 @@
   const addModal = document.getElementById('add-modal');
   const amNick = document.getElementById('am-nick');
   const amEmail = document.getElementById('am-email');
+  const amPw = document.getElementById('am-pw');
+  const amPw2 = document.getElementById('am-pw2');
   const amRole = document.getElementById('am-role');
-  function openAdd() { amNick.value = ''; amEmail.value = ''; amRole.value = 'member'; addModal.classList.add('show'); amNick.focus(); }
+  function openAdd() { amNick.value = ''; amEmail.value = ''; amPw.value = ''; amPw2.value = ''; amRole.value = 'member'; addModal.classList.add('show'); amNick.focus(); }
   function closeAdd() { addModal.classList.remove('show'); }
   document.getElementById('add-user-btn').addEventListener('click', openAdd);
   document.getElementById('am-close').addEventListener('click', closeAdd);
@@ -167,8 +171,14 @@
   document.getElementById('am-submit').addEventListener('click', () => {
     const nick = amNick.value.trim();
     const email = amEmail.value.trim();
+    const pw = amPw.value;
+    const pw2 = amPw2.value;
     if (!nick) { amNick.focus(); toastText('닉네임을 입력해 주세요'); return; }
     if (!email) { amEmail.focus(); toastText('이메일을 입력해 주세요'); return; }
+    if (!pw) { amPw.focus(); toastText('비밀번호를 입력해 주세요'); return; }
+    if (pw.length < 8) { amPw.focus(); toastText('비밀번호는 8자 이상 입력해 주세요'); return; }
+    if (pw !== pw2) { amPw2.focus(); toastText('비밀번호가 일치하지 않습니다'); return; }
+    // 시안: 비밀번호는 검증만 하고 저장하지 않음(평문 저장 방지)
     USERS.push({ nick: nick, email: email, org: '', role: amRole.value });
     closeAdd();
     renderUsers();
