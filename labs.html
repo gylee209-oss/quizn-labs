@@ -152,11 +152,16 @@
     card.addEventListener('click', () => { location.href = 'labs-detail.html?model=' + m.key; });
 
     const thumb = el('div', 'mc-thumb');
-    thumb.append(
-      Object.assign(el('span', 'status-badge ' + m.status), { textContent: STATUS_KO[m.status] }),
-      Object.assign(el('span', 'shot-label'), { textContent: 'PRODUCT SHOT' }),
-      Object.assign(el('span', 'watermark'), { textContent: m.name.charAt(0) })
-    );
+    if (m.thumb) {
+      const im = el('img', 'mc-shot'); im.src = m.thumb; im.alt = m.name;
+      thumb.append(im, Object.assign(el('span', 'status-badge ' + m.status), { textContent: STATUS_KO[m.status] }));
+    } else {
+      thumb.append(
+        Object.assign(el('span', 'status-badge ' + m.status), { textContent: STATUS_KO[m.status] }),
+        Object.assign(el('span', 'shot-label'), { textContent: 'PRODUCT SHOT' }),
+        Object.assign(el('span', 'watermark'), { textContent: m.name.charAt(0) })
+      );
+    }
 
     const body = el('div', 'mc-body');
     if (m.category && CATEGORY_KO[m.category]) body.append(el('span', 'mc-cat', CATEGORY_KO[m.category]));

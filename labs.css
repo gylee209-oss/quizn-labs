@@ -352,9 +352,18 @@ a { color: inherit; text-decoration: none; }
 .detail-info h1 { font-size: 40px; font-weight: 800; margin: 0 0 18px; color: var(--fg); }
 .model-key { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--fg-sub); margin-bottom: 18px; }
 .model-key code { font-family: var(--font-mono); background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px; color: var(--fg); }
-.detail-info .d-desc { font-size: 15px; color: var(--fg-sub); line-height: 1.7; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.detail-info .d-desc { font-size: 15px; color: var(--fg-sub); line-height: 1.7; margin: 0; white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .detail-info .d-desc.expanded { -webkit-line-clamp: unset; }
 .more-link { display: block; text-align: center; color: var(--accent); font-weight: 700; font-size: 15px; margin: 18px 0; cursor: pointer; }
+
+/* 대표 이미지 (카드·상세 썸네일) */
+.mc-thumb img.mc-shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.detail-thumb img.d-shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+/* 상세 설명 이미지 갤러리 */
+.d-images { display: flex; flex-direction: column; gap: 14px; margin: 20px 0 0; }
+.d-images img { width: 100%; border-radius: var(--r-md); border: 1px solid var(--border); display: block; }
+/* 등록 폼 설명 이미지 미리보기 */
+.img-ph-sm img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 .detail-actions { display: flex; gap: 12px; }
 
 /* ── 상세: 통계 박스 ─────────────────────────── */

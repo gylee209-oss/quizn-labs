@@ -454,6 +454,7 @@ ul li strong { color: #1e40af; }
   <ul class="toc-list" id="toc">
     <li><a href="#overview">📋 프로젝트 개요</a></li>
     <li><a href="#structure">📁 디렉토리 구조</a></li>
+    <li><a href="#ia">🗺 IA · 정보 구조</a></li>
     <li><a href="#design">🎨 디자인 시스템</a></li>
     <li class="sub"><ul class="toc-list">
       <li><a href="#tokens">블루 토큰 (라이트/다크)</a></li>
@@ -522,6 +523,45 @@ ul li strong { color: #1e40af; }
     <div class="alert-warn">
       <span class="icon">⚠</span>
       <span>분리 시 <code>colors_and_type.css</code>가 누락되면 <code>quizn-home·myshow·labs-auth</code>의 SHOW 주황 테마가 깨진다. 이 3개 페이지가 참조하므로 반드시 <code>labs/</code>에 포함해야 한다. (<code>board-common.css</code>는 Labs가 안 써서 불필요.)</span>
+    </div>
+  </section>
+
+  <!-- 2.5 IA -->
+  <section class="section" id="ia">
+    <h2 class="section-title"><span class="icon">🗺</span> IA · 정보 구조 (GitHub 기준)</h2>
+    <div class="card">
+      <strong style="display:block;margin-bottom:10px;">사이트맵</strong>
+      <div class="layout-diagram">
+<span class="ld-a">[진입 · QuizN 본체]</span>
+  <span class="ld-b">quizn-home.html</span>  <span class="ld-dim">메인(비로그인)</span>  →  <span class="ld-b">myshow.html</span>  <span class="ld-dim">My Show(로그인)</span>  →  <span class="ld-b">labs-auth.html</span>  <span class="ld-dim">계정 인가</span>
+
+<span class="ld-a">[Labs 포털]</span>  <span class="ld-dim">index.html → labs.html 리다이렉트</span>
+  <span class="ld-c">labs.html</span>  <span class="ld-dim">모델 목록 · member · 검색·필터·정렬·카드8</span>
+    ├ <span class="ld-c">labs-detail.html?model=</span>  <span class="ld-dim">상세 · member · 통계·평점·탭</span>
+    ├ <span class="ld-c">labs-write.html</span>  <span class="ld-dim">모델 등록·수정 · staff · ?edit=</span>
+    └ <span class="ld-c">labs-admin.html</span>  <span class="ld-dim">권한 관리 · staff · 닉네임·이메일·삭제·추가</span>
+  <span class="ld-c">labs-md.html</span>  <span class="ld-dim">프로젝트 문서</span>
+
+<span class="ld-a">[전역 요소]</span>  <span class="ld-dim">헤더 · 게이트(guest) · 푸터 · localStorage(5키)</span>
+<span class="ld-a">[권한 레이어]</span>  <span class="ld-dim">guest(게이트) · member(열람·댓글·평점) · staff(+등록·관리·수정·삭제)</span>
+      </div>
+    </div>
+    <div class="card">
+      <strong style="display:block;margin-bottom:16px;">페이지별 경로 · 권한 · 핵심 구성</strong>
+      <table class="model-table">
+        <thead><tr><th>페이지</th><th>경로</th><th>권한</th><th>핵심 구성</th></tr></thead>
+        <tbody>
+          <tr><td>QuizN 메인</td><td class="key">quizn-home.html</td><td>—</td><td>SHOW 히어로 · 통계 · CTA · GNB Labs</td></tr>
+          <tr><td>My Show</td><td class="key">myshow.html</td><td>로그인</td><td>로그인된 메인 · GNB "Labs[NEW]" → 인가</td></tr>
+          <tr><td>계정 인가</td><td class="key">labs-auth.html</td><td>로그인</td><td>quizn_account 표시 · "접속"→member</td></tr>
+          <tr><td>리다이렉트</td><td class="key">index.html</td><td>—</td><td>→ labs.html</td></tr>
+          <tr><td>모델 목록</td><td class="key">labs.html</td><td><span class="mini-badge live">member</span></td><td>검색·상태필터·정렬·카드 8개 페이지네이션</td></tr>
+          <tr><td>모델 상세</td><td class="key">labs-detail.html</td><td><span class="mini-badge live">member</span></td><td>통계·평점분포·내평점·탭·데모버튼·댓글</td></tr>
+          <tr><td>모델 등록·수정</td><td class="key">labs-write.html</td><td><span class="mini-badge archived">staff</span></td><td>등록 폼 · ?edit= 수정 · 임시저장</td></tr>
+          <tr><td>권한 관리</td><td class="key">labs-admin.html</td><td><span class="mini-badge archived">staff</span></td><td>닉네임·이메일·소속·역할·역할변경·삭제·+추가</td></tr>
+          <tr><td>프로젝트 문서</td><td class="key">labs-md.html</td><td>—</td><td>본 설계 문서</td></tr>
+        </tbody>
+      </table>
     </div>
   </section>
 

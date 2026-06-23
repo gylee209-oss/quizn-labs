@@ -22,7 +22,8 @@
   <!-- 상단 2단 -->
   <section class="detail-top">
     <div class="detail-thumb">
-      <span class="shot-label">PRODUCT SHOT</span>
+      <img class="d-shot" id="d-thumb-img" hidden alt="">
+      <span class="shot-label" id="d-shot-label">PRODUCT SHOT</span>
       <span class="watermark" id="d-watermark">미</span>
     </div>
     <div class="detail-info">
@@ -37,7 +38,8 @@
       <h1 id="d-name">모델명</h1>
       <div class="model-key">모델 키 <code id="d-key">model_key</code></div>
       <p class="d-desc" id="d-desc"></p>
-      <span class="more-link" id="more-link">더 보기</span>
+      <span class="more-link" id="more-link" hidden>더 보기</span>
+      <div class="d-images" id="d-images"></div>
       <div class="detail-actions">
         <button class="btn primary" id="demo-btn">외부 데모 열기 <i class="icon-export"></i></button>
         <button class="btn ghost" id="share-btn"><i class="icon-share"></i> 공유하기</button>
@@ -161,6 +163,16 @@
   document.getElementById('d-name').textContent = model.name;
   document.getElementById('d-key').textContent = model.key;
   document.getElementById('d-desc').textContent = model.desc;
+  // 대표 이미지 (있으면 썸네일 자리에 표시)
+  if (model.thumb) {
+    const im = document.getElementById('d-thumb-img'); im.src = model.thumb; im.alt = model.name; im.hidden = false;
+    const sl = document.getElementById('d-shot-label'); if (sl) sl.style.display = 'none';
+    document.getElementById('d-watermark').style.display = 'none';
+  }
+  // 설명 이미지 갤러리
+  (model.images || []).forEach(function (src) { const im = el('img'); im.src = src; im.alt = model.name + ' 설명 이미지'; document.getElementById('d-images').append(im); });
+  // 더 보기: 설명이 3줄을 넘겨 잘릴 때만 노출
+  requestAnimationFrame(function () { const dd = document.getElementById('d-desc'); if (dd.scrollHeight - dd.clientHeight > 2) document.getElementById('more-link').hidden = false; });
   document.getElementById('st-rating').textContent = model.rating.toFixed(2);
   document.getElementById('st-count').textContent = model.count;
   document.getElementById('st-version').textContent = model.version;

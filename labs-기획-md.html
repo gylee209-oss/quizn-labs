@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoftN Labs — 서비스 기획서 (기획자 관점)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box;}
+:root{
+  --accent:#2563eb; --accent-deep:#1e3a8a; --accent-soft:#eff6ff; --accent-bd:#bfdbfe;
+  --ink:#0f172a; --ink-sub:#475569; --ink-mute:#94a3b8;
+  --bg:#f4f6fb; --card:#fff; --bd:#e2e8f0; --soft:#f8fafc;
+  --beta:#b45309; --beta-bg:#fef3c7; --live:#15803d; --live-bg:#dcfce7;
+  --hold:#6d28d9; --hold-bg:#ede9fe; --arch:#64748b; --arch-bg:#f1f5f9;
+}
+body{margin:0;background:var(--bg);font-family:'Noto Sans KR',sans-serif;font-size:15px;line-height:1.75;color:var(--ink);}
+/* TOC */
+.sidebar{position:fixed;top:0;left:0;width:248px;height:100vh;background:#fff;border-right:1px solid var(--bd);padding:30px 20px;overflow-y:auto;z-index:10;}
+.s-logo{font-family:'Montserrat';font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:8px;}
+.s-logo .m{width:22px;height:22px;border-radius:6px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:13px;}
+.s-sub{font-size:11px;color:var(--ink-mute);letter-spacing:.05em;text-transform:uppercase;margin:6px 0 24px;padding-bottom:14px;border-bottom:1px solid #f1f5f9;}
+.toc{list-style:none;margin:0;padding:0;}
+.toc li{margin-bottom:2px;}
+.toc a{display:block;padding:6px 10px;border-radius:6px;font-size:13px;color:var(--ink-sub);text-decoration:none;}
+.toc a:hover{background:var(--accent-soft);color:var(--accent);}
+.toc a.active{background:var(--accent-soft);color:var(--accent);font-weight:700;}
+/* main */
+.wrap{margin-left:248px;padding:56px 60px 120px;max-width:1060px;}
+.head{background:linear-gradient(135deg,var(--accent),var(--accent-deep));border-radius:16px;padding:44px 48px;margin-bottom:48px;color:#fff;}
+.head .ey{font-family:'Montserrat';font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.7);}
+.head h1{font-size:30px;font-weight:800;margin:10px 0 10px;}
+.head p{font-size:15px;color:rgba(255,255,255,.88);margin:0;max-width:640px;}
+.head .meta{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;}
+.head .chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:50px;padding:5px 13px;font-size:12px;}
+.sec{margin-bottom:56px;scroll-margin-top:24px;}
+.sec h2{font-size:21px;font-weight:800;margin:0 0 20px;padding-bottom:11px;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:10px;letter-spacing:-.01em;}
+.sec h2 .n{width:30px;height:30px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:14px;border:1px solid var(--accent-bd);flex-shrink:0;font-family:'Montserrat';font-weight:800;}
+.sub{font-size:16px;font-weight:700;color:var(--accent-deep);margin:28px 0 12px;display:flex;align-items:center;gap:8px;}
+.sub::before{content:"";width:3px;height:15px;background:var(--accent);border-radius:2px;}
+.card{background:var(--card);border-radius:12px;padding:24px 28px;box-shadow:0 2px 12px rgba(15,23,42,.05);margin-bottom:16px;}
+p{margin:0 0 12px;}
+.lead{color:var(--ink-sub);}
+strong{color:var(--accent-deep);}
+ul{padding-left:20px;margin:10px 0;}
+li{margin-bottom:6px;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0;}
+th{background:var(--accent-soft);color:var(--accent-deep);font-weight:700;text-align:left;padding:10px 14px;border-bottom:2px solid var(--accent-bd);}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+code{font-family:'SF Mono',Consolas,monospace;background:var(--accent-soft);color:var(--accent-deep);padding:1px 6px;border-radius:4px;font-size:12.5px;border:1px solid var(--accent-bd);}
+.badge{display:inline-block;padding:2px 10px;border-radius:50px;font-size:11px;font-weight:700;}
+.b-beta{background:var(--beta-bg);color:var(--beta);} .b-live{background:var(--live-bg);color:var(--live);}
+.b-hold{background:var(--hold-bg);color:var(--hold);} .b-arch{background:var(--arch-bg);color:var(--arch);}
+.b-new{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-bd);}
+.note{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:13px 17px;font-size:13.5px;color:var(--ink-sub);margin:14px 0;}
+.warn{background:#fffbeb;border-left:4px solid #f59e0b;border-radius:0 8px 8px 0;padding:13px 17px;font-size:13.5px;color:#92400e;margin:14px 0;}
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:12px 0;}
+.flow .step{flex:1;min-width:150px;background:#fff;border:1px solid var(--bd);border-radius:10px;padding:14px;text-align:center;}
+.flow .step .f{font-family:'SF Mono',monospace;font-size:12px;color:var(--accent);font-weight:700;display:block;margin-bottom:3px;}
+.flow .step .d{font-size:12px;color:var(--ink-sub);}
+.flow .arr{padding:0 8px;color:var(--ink-mute);font-weight:700;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.kbox{border:1px solid var(--bd);border-radius:12px;padding:18px 20px;background:#fff;}
+.kbox .t{font-weight:800;font-size:15px;margin-bottom:4px;}
+.kbox.guest{border-top:3px solid var(--ink-mute);} .kbox.member{border-top:3px solid var(--accent);} .kbox.staff{border-top:3px solid var(--accent-deep);}
+@media(max-width:900px){.sidebar{display:none;}.wrap{margin-left:0;padding:32px 22px 80px;}.grid2{grid-template-columns:1fr;}.flow{flex-direction:column;}.flow .arr{transform:rotate(90deg);}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="s-logo"><span class="m">S</span> SoftN Labs</div>
+  <div class="s-sub">서비스 기획서 · 기획자 관점</div>
+  <ul class="toc" id="toc">
+    <li><a href="#overview">📋 1. 문서 개요</a></li>
+    <li><a href="#bg">🎯 2. 배경 &amp; 문제</a></li>
+    <li><a href="#goal">📈 3. 목표 &amp; 성공지표</a></li>
+    <li><a href="#users">👥 4. 사용자 &amp; 권한</a></li>
+    <li><a href="#ia">🗂 5. 정보 구조(IA)</a></li>
+    <li><a href="#flow">🚪 6. 진입 &amp; 인증 플로우</a></li>
+    <li><a href="#screens">🖥 7. 화면별 기획</a></li>
+    <li><a href="#policy">📐 8. 핵심 정책</a></li>
+    <li><a href="#content">🗃 9. 콘텐츠 모델</a></li>
+    <li><a href="#modal">🪟 10. 모달 &amp; 상태</a></li>
+    <li><a href="#scope">⛔ 11. 제약 &amp; 향후</a></li>
+    <li><a href="#glossary">📖 12. 용어 정리</a></li>
+    <li><a href="#ops">⚙ 13. 운영 정책 상세</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+  <div class="head">
+    <div class="ey">SoftN · QuizN 실험실 포털</div>
+    <h1>SoftN Labs 서비스 기획서</h1>
+    <p>QuizN의 실험적 기능·프로토타입(모델)을 공개하고 회원의 의견·별점 피드백을 수집하는 독립 포털. 본 문서는 현재 구현된 화면과 라이브 사이트를 기준으로 기획 의도·정책·구조를 정리한다.</p>
+    <div class="meta">
+      <span class="chip">버전 v1.0 (기획)</span>
+      <span class="chip">기준일 2026-06-23</span>
+      <span class="chip">작성 가영 · gy.lee@softn.kr</span>
+      <span class="chip">🌐 gylee209-oss.github.io/quizn-labs</span>
+    </div>
+  </div>
+
+  <!-- 1 -->
+  <section class="sec" id="overview">
+    <h2><span class="n">1</span> 문서 개요</h2>
+    <div class="card">
+      <p><strong>목적.</strong> 현재 Labs 화면·라이브 사이트를 기준으로 서비스의 기획 의도, 사용자·권한, 정보 구조, 화면별 요구사항, 핵심 정책을 한 문서로 공유한다. 개발 구현 세부(코드)는 별도 문서(<code>labs-md.html</code>)가 담당하며, 본 문서는 <strong>왜·무엇을·어떤 규칙으로</strong>에 집중한다.</p>
+      <p style="margin:0;"><strong>범위.</strong> Labs 포털의 진입·인증, 모델 목록·상세, 모델 등록, 권한 관리 4개 핵심 화면과 전역 공통(헤더·푸터·테마), 상태·카테고리·의견 정책. 실제 백엔드 연동은 비범위(정적 시안 단계).</p>
+      <div class="note">본 기획서는 그간 작성된 PRD·흐름도·와이어프레임·IA(피그마)와 실제 구현 화면을 종합해 역으로 정리한 <strong>기준 문서</strong>다. 정책 변경 시 본 문서를 먼저 갱신한다.</div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="sec" id="bg">
+    <h2><span class="n">2</span> 배경 &amp; 문제</h2>
+    <div class="card">
+      <p class="lead">QuizN은 다양한 실험 기능·프로토타입을 만들지만, 이를 <strong>사용자에게 노출하고 반응을 모으는 일관된 창구</strong>가 없었다. 실험 기능은 정식 출시 전 여러 단계(베타·검토 대기·보관)에 흩어져 있어, 상태를 명확히 보여주고 그에 맞게 상호작용을 제어할 장치가 필요했다.</p>
+      <ul>
+        <li><strong>문제 1.</strong> 실험 기능의 공개·피드백 수집 채널 부재 → 사용자 반응을 정량·정성으로 모으기 어려움.</li>
+        <li><strong>문제 2.</strong> 기능별 성숙도(상태)가 사용자에게 전달되지 않아 기대치 관리가 안 됨.</li>
+        <li><strong>문제 3.</strong> 사내 자산이므로 접근 통제(로그인 회원·운영자)가 필요.</li>
+        <li><strong>문제 4.</strong> 실험이 늘면서 분류 없는 단순 나열은 탐색이 어려움 → <strong>카테고리</strong> 도입 필요.</li>
+      </ul>
+      <p style="margin:0;"><strong>해결 방향.</strong> 상태·카테고리로 구조화한 <strong>독립 포털 Labs</strong>를 만들어, 로그인 회원이 모델을 탐색하고 의견·별점으로 참여하며, 운영자가 모델을 등록·관리한다.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="sec" id="goal">
+    <h2><span class="n">3</span> 목표 &amp; 성공지표</h2>
+    <div class="card">
+      <h3 class="sub">목표 (Goals)</h3>
+      <ul>
+        <li>실험 모델을 <strong>상태·카테고리</strong>로 구조화해 한 목록에서 탐색·필터·정렬한다.</li>
+        <li>권한 3단계(비로그인·일반·운영)로 <strong>접근·상호작용 범위를 일관되게 제어</strong>한다.</li>
+        <li>회원이 <strong>의견·별점</strong>으로 참여하고, 비활성(보류·보관) 모델은 읽기 전용으로 보존한다.</li>
+        <li>운영자가 <strong>모델 등록·수정·삭제</strong>와 사용자 권한을 관리한다.</li>
+      </ul>
+      <h3 class="sub">성공지표 (KPI · 제안)</h3>
+      <table>
+        <thead><tr><th>구분</th><th>지표</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>참여</td><td>모델당 의견 수, 별점 참여자 수</td><td>핵심 선행지표</td></tr>
+          <tr><td>탐색</td><td>상태·카테고리 필터 사용률, 검색 사용률</td><td>구조화 효과 검증</td></tr>
+          <tr><td>성숙</td><td>베타 → 정식 승격 모델 수, 보류·보관 정리율</td><td>후행지표</td></tr>
+        </tbody>
+      </table>
+      <div class="warn">⚠ 현재는 정적 시안으로 <strong>지표 측정 도구가 미연동</strong>이다. 위 KPI는 정식 단계에서 백엔드 이벤트 로깅 연동을 전제로 한 <strong>가설·제안</strong>이다.</div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="sec" id="users">
+    <h2><span class="n">4</span> 사용자 &amp; 권한</h2>
+    <div class="card">
+      <p class="lead">권한은 <code>localStorage.labs_auth</code> = <code>guest | member | staff</code> 3단계로 관리한다. 계정 정체성은 <code>quizn_account = {nick, id}</code> 단일 소스를 따르며 기본값은 <strong>퀴잰용용 / gy.lee@softn.kr</strong>이다.</p>
+      <div class="grid2">
+        <div class="kbox guest"><div class="t">비로그인 · guest</div><p style="margin:0;color:var(--ink-sub);font-size:13.5px;">게이트(잠금) 오버레이만 노출. 콘텐츠 접근 불가. 진입 플로우로만 member 전환.</p></div>
+        <div class="kbox member"><div class="t">일반 · member</div><p style="margin:0;color:var(--ink-sub);font-size:13.5px;">모델 목록·상세 열람, 의견·별점(내 참여) 참여. 등록·관리 메뉴는 숨김.</p></div>
+        <div class="kbox staff"><div class="t">운영 · staff</div><p style="margin:0;color:var(--ink-sub);font-size:13.5px;">일반 권한 전체 + 새 모델 등록·수정·삭제, 헤더 "관리"(권한 관리).</p></div>
+        <div class="kbox"><div class="t">전환</div><p style="margin:0;color:var(--ink-sub);font-size:13.5px;">헤더 Member/Staff 토글로 역할 전환(로그인 상태). 본인 계정은 강등·삭제 불가.</p></div>
+      </div>
+      <h3 class="sub">권한 접근 모델 (Access Matrix)</h3>
+      <table>
+        <thead><tr><th>역할</th><th>목록·상세 열람</th><th>의견·별점</th><th>모델 등록·수정·삭제</th><th>권한 관리</th></tr></thead>
+        <tbody>
+          <tr><td>비로그인(guest)</td><td>✕ 게이트</td><td>✕</td><td>✕</td><td>✕</td></tr>
+          <tr><td>일반(member)</td><td>✓</td><td>✓</td><td>✕</td><td>✕</td></tr>
+          <tr><td>운영(staff)</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+        </tbody>
+      </table>
+      <div class="note">보류·보관(비활성) 모델은 <strong>모든 역할에서 의견·별점 불가</strong>(읽기 전용). 상세에 비활성 안내 배너 노출.</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="sec" id="ia">
+    <h2><span class="n">5</span> 정보 구조 (IA)</h2>
+    <div class="card">
+      <p class="lead">Labs는 기능 기준 <strong>4영역</strong>으로 구조화한다. 진입·인가 → 탐색(허브) → 모델 → 운영(STAFF).</p>
+      <table>
+        <thead><tr><th>영역</th><th>화면 / 노드</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td>진입 · 인가</td><td>quizn-home · myshow · labs-auth · 비로그인 게이트</td><td>QuizN 계정으로 Labs 접속을 인가</td></tr>
+          <tr><td>탐색 (허브)</td><td><code>labs.html</code> (목록) · 필터·정렬·검색 · 빈 상태</td><td>모델 카드 목록, 모든 동선의 중심</td></tr>
+          <tr><td>모델</td><td><code>labs-detail</code> (상세) · 탭(의견·공지·배포) · 모달</td><td>모델 정보·참여</td></tr>
+          <tr><td>운영 (STAFF)</td><td><code>labs-write</code> (등록) · <code>labs-admin</code> (권한 관리) · 사용자 추가 모달</td><td>운영자 전용</td></tr>
+        </tbody>
+      </table>
+      <div class="note">전역 공통(헤더·푸터·테마 토글)과 권한 접근 모델, 콘텐츠 모델, 모달·상태 인벤토리는 피그마 IA 섹션(14)에 시각화돼 있다. 본 문서 4·9·10장과 연결된다.</div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="sec" id="flow">
+    <h2><span class="n">6</span> 진입 &amp; 인증 플로우</h2>
+    <div class="card">
+      <div class="flow">
+        <div class="step"><span class="f">quizn-home</span><span class="d">비로그인 메인</span></div>
+        <div class="arr">→</div>
+        <div class="step"><span class="f">myshow</span><span class="d">My Show · GNB "Labs"</span></div>
+        <div class="arr">→</div>
+        <div class="step"><span class="f">labs-auth</span><span class="d">계정 인가 "접속"</span></div>
+        <div class="arr">→</div>
+        <div class="step"><span class="f">labs.html</span><span class="d">Labs 목록 (member)</span></div>
+      </div>
+      <ul>
+        <li>"접속" 시 <code>labs_auth = 'member'</code> 설정, <code>quizn_account = {nick:'퀴잰용용', id:'gy.lee@softn.kr'}</code> 저장 → 헤더·권한 관리에 전파.</li>
+        <li>비로그인으로 <code>labs.html</code>을 직접 열면 <strong>게이트(잠금)</strong>가 콘텐츠를 가린다. 위 인가 경로(또는 헤더 로그인 토글)로 member가 되어야 목록이 열린다.</li>
+        <li>member ↔ staff는 로그인 상태에서 헤더 역할 토글로 전환한다.</li>
+      </ul>
+      <div class="note">기획 의도: 사내 자산 보호를 위해 <strong>로그인 회원만</strong> 접근. 비로그인은 콘텐츠를 미리 보여주지 않고 전면 차단해 자산 노출을 막는다.</div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="sec" id="screens">
+    <h2><span class="n">7</span> 화면별 기획</h2>
+
+    <h3 class="sub">7-1. Labs 목록 <code>labs.html</code> · 허브</h3>
+    <div class="card">
+      <p><strong>목적.</strong> 진행 중인 실험 모델을 한눈에 탐색·필터·정렬하고 상세로 진입시키는 중심 화면.</p>
+      <ul>
+        <li><strong>구성:</strong> 헤더 · 히어로("Labs 실험실") · 주의 배너 · 컨트롤 바(검색·상태 필터·정렬) · <strong>카테고리 필터(별도 줄)</strong> · 모델 카드 그리드(4열) · 페이지네이션(8개 단위).</li>
+        <li><strong>상태 필터 칩:</strong> 전체 · 베타 · 정식 · <span class="badge b-hold">보류</span> · 보관 (카운트 표시).</li>
+        <li><strong>카테고리 필터:</strong> 전체 · 퀴즈앤 확장기능 · 아이디어.</li>
+        <li><strong>정렬:</strong> 최근 업데이트 / 평점 높은순 / <strong>참여 많은순</strong> / 이름순.</li>
+        <li><strong>카드:</strong> 상태 배지 + <strong>카테고리 배지</strong> + 썸네일 + 모델명 + 설명 + 별점(★ 호응도·참여 수). 클릭 → 상세.</li>
+        <li><strong>"진행 중인 모델" 카운트</strong>는 비활성(보류·보관)을 <strong>제외</strong>하고 센다.</li>
+        <li>운영자에게만 "+ 새 모델 등록" 버튼 노출.</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">7-2. 모델 상세 <code>labs-detail.html?model={key}</code></h3>
+    <div class="card">
+      <p><strong>목적.</strong> 모델 정보를 전달하고 회원의 의견·별점 참여를 받는다.</p>
+      <ul>
+        <li><strong>상단:</strong> 썸네일 + 상태·<strong>카테고리</strong> 배지 + 모델명 + 모델 키 + 설명 + 액션(외부 데모 열기 / 공유).</li>
+        <li><strong>통계 3분할:</strong> <strong>호응도</strong>(평균 별점) · 배포(버전) · <strong>의견</strong>(수).</li>
+        <li><strong>호응도 분포</strong> 막대 + <strong>내 참여</strong>(별점 클릭 입력 · 수정/삭제).</li>
+        <li><strong>탭:</strong> 의견(별점+의견 목록·페이지네이션) · 공지 · 배포 이력.</li>
+        <li><strong>의견:</strong> 본인 의견만 수정·삭제(확인 모달). 입력은 안전하게 처리(XSS 방지·한글 입력 가드).</li>
+        <li><strong>연결 방식:</strong> 미제공 → 데모 버튼 숨김 / 체험 → "체험하기" / 그 외 → "외부 데모 열기".</li>
+        <li>운영자가 등록한 모델이면 우상단 수정·삭제 노출.</li>
+      </ul>
+      <div class="warn">보류·보관(비활성) 모델은 "이 모델은 OO 상태입니다" 배너 + 의견·별점·외부 데모 비활성(읽기 전용).</div>
+    </div>
+
+    <h3 class="sub">7-3. 모델 등록 <code>labs-write.html</code> · STAFF</h3>
+    <div class="card">
+      <p><strong>목적.</strong> 운영자가 Labs에 노출할 모델 카드를 등록·수정한다.</p>
+      <ul>
+        <li><strong>입력:</strong> 상태(베타·정식·<strong>보류</strong>·보관) · <strong>카테고리</strong>(퀴즈앤 확장기능·아이디어) · 모델명 · 모델 키(영문) · 한 줄 설명 · 연결 방식 · 연결 URL · 썸네일·설명 이미지.</li>
+        <li><strong>저장:</strong> 등록 모델은 목록 상단에 반영. 작성 중 임시저장 지원. <code>?edit={key}</code> 모드는 "모델 수정"으로 전환하고 기존 평점·의견을 보존.</li>
+        <li><strong>검증:</strong> 모델명·키 필수, 키는 영문 소문자·숫자·_, 연결 방식이 데모/체험이면 URL 필수.</li>
+        <li>비운영자 접근 시 "등록 권한 없음" 안내(폼 비표시).</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">7-4. 권한 관리 <code>labs-admin.html</code> · STAFF</h3>
+    <div class="card">
+      <p><strong>목적.</strong> 운영자가 사용자 역할을 부여·회수하고 사용자를 추가한다.</p>
+      <ul>
+        <li><strong>사용자 표:</strong> 닉네임 · 이메일 · 소속 · 역할 · 역할 변경(일반/운영 토글) · 삭제. 닉네임·이메일 검색.</li>
+        <li><strong>본인 행</strong>은 <code>(나)</code>로 표시하며 강등·삭제 불가.</li>
+        <li><strong>사용자 추가 모달:</strong> 닉네임 · 이메일 · <span class="badge b-new">비밀번호</span> · <span class="badge b-new">비밀번호 확인</span> · 역할.</li>
+        <li><strong>검증:</strong> 비밀번호 8자 이상 · 확인 일치. (시안 단계라 비밀번호 값은 저장하지 않음 — 평문 저장 방지.)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="sec" id="policy">
+    <h2><span class="n">8</span> 핵심 정책</h2>
+
+    <h3 class="sub">8-1. 모델 상태 라이프사이클</h3>
+    <div class="card">
+      <table>
+        <thead><tr><th>상태</th><th>의미</th><th>활성</th><th>참여</th><th>진행 중 카운트</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge b-beta">베타</span></td><td>실험 공개·피드백 수집</td><td>활성</td><td>가능</td><td>포함</td></tr>
+          <tr><td><span class="badge b-live">정식</span></td><td>안정 운영</td><td>활성</td><td>가능</td><td>포함</td></tr>
+          <tr><td><span class="badge b-hold">보류</span></td><td>검토 대기·일시 중단</td><td><strong>비활성</strong></td><td>불가</td><td>제외</td></tr>
+          <tr><td><span class="badge b-arch">보관</span></td><td>종료·신규 대체</td><td><strong>비활성</strong></td><td>불가</td><td>제외</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><strong>보류·보관은 정책상 동일</strong>(비활성·읽기 전용)하며 <strong>라벨·색으로만 구분</strong>한다. 의미상 보류는 재개 가능, 보관은 종료에 가깝다.</li>
+        <li>모든 상태 전이는 <strong>운영자의 수동 변경(등록·수정 폼)</strong>이다 — 시스템 자동 전이가 아니다.</li>
+        <li>색: 베타=amber, 정식=green, <strong>보류=violet(신규)</strong>, 보관=gray. 다크/라이트 토큰으로 정의.</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">8-2. 카테고리</h3>
+    <div class="card">
+      <ul>
+        <li>모델은 <strong>퀴즈앤 확장기능</strong> 또는 <strong>아이디어</strong> 하나로 분류한다.</li>
+        <li>목록 상단에 상태 필터와 <strong>별도 줄</strong>로 카테고리 필터(전체·확장기능·아이디어)를 둔다.</li>
+        <li>카드·상세에 카테고리 배지 표시. 등록 폼에서 필수 선택. 미지정 모델은 배지 숨김·'전체'에만 노출.</li>
+      </ul>
+      <div class="note">카테고리 추가 시 한 곳(<code>CATEGORY_KO</code>)만 정의하면 카드·필터·등록 폼에 일괄 반영되는 구조다(확장 용이).</div>
+    </div>
+
+    <h3 class="sub">8-3. 의견 · 별점 (참여)</h3>
+    <div class="card">
+      <ul>
+        <li><strong>용어 통일:</strong> 평균 평점 → <strong>호응도</strong>, 피드백·댓글 → <strong>의견</strong>, 별점 평가 → <strong>참여</strong>, 내 평점 → <strong>내 참여</strong>. 별(★) 표기는 유지.</li>
+        <li>회원은 별점(내 참여)과 의견을 남기고, <strong>본인 의견만</strong> 수정·삭제(확인 모달).</li>
+        <li>비활성(보류·보관) 모델은 참여 불가 — "OO 상태의 모델은 참여할 수 없습니다" 안내.</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">8-4. 운영 (등록 · 권한)</h3>
+    <div class="card">
+      <ul>
+        <li>운영자만 모델 등록·수정·삭제, 권한 관리, 사용자 추가.</li>
+        <li>사용자 추가 시 비밀번호·비밀번호 확인을 받아 8자 이상·일치를 검증한다.</li>
+      </ul>
+      <div class="warn">⚠ 정식 단계에서는 비밀번호를 서버에서 <strong>해시 저장</strong>해야 한다. 현 시안은 검증 UI만 두고 값은 저장하지 않는다.</div>
+    </div>
+  </section>
+
+  <!-- 9 -->
+  <section class="sec" id="content">
+    <h2><span class="n">9</span> 콘텐츠 모델</h2>
+    <div class="card">
+      <table>
+        <thead><tr><th>엔티티</th><th>필드</th></tr></thead>
+        <tbody>
+          <tr><td><strong>모델 (Model)</strong></td><td>key · 모델명 · 상태(베타·정식·보류·보관) · 카테고리(확장기능·아이디어) · 호응도(평점) · 배포 버전 · 의견 수 · 연결 방식(데모·체험·없음) · 썸네일·설명 이미지</td></tr>
+          <tr><td><strong>사용자 (User)</strong></td><td>닉네임 · 이메일 · 역할(member·staff) · 비밀번호(시안 미저장)</td></tr>
+          <tr><td><strong>저장소·진입</strong></td><td><code>index.html → labs.html</code> 리다이렉트 · <code>labs_custom_models</code> · <code>labs_draft_new_model</code> · <code>labs_rating_{key}</code> · <code>labs_auth</code> · <code>labs_theme</code> · <code>quizn_account</code></td></tr>
+        </tbody>
+      </table>
+      <div class="note">현재는 기본 모델 8개 + 운영자 등록(커스텀) 모델을 병합해 목록에 노출하며, 모든 상태를 <code>localStorage</code>로 시뮬레이션한다.</div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="sec" id="modal">
+    <h2><span class="n">10</span> 모달 &amp; 상태</h2>
+    <div class="card">
+      <p><strong>모달.</strong> 게시글 상세 · 이미지 뷰어 · 외부 데모 이동 확인 · 의견 삭제 확인 · 모델 삭제 확인 · 사용자 추가.</p>
+      <p style="margin:0;"><strong>상태 화면.</strong> 로딩(스켈레톤) · 에러 · 빈 상태(검색 0건) · 비활성 배너(보류·보관) · 권한 없음(등록·관리).</p>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="sec" id="scope">
+    <h2><span class="n">11</span> 제약 &amp; 향후</h2>
+    <div class="card">
+      <h3 class="sub">비범위 / 제약</h3>
+      <ul>
+        <li><strong>정적 시안 단계</strong> — 실제 백엔드·DB·인증 서버 미연동, <code>localStorage</code> 시뮬레이션.</li>
+        <li>비밀번호 실제 저장·해싱 미구현(검증 UI만).</li>
+        <li>모바일 전용 반응형 최적화는 이번 범위 밖(데스크톱 기준).</li>
+        <li>정식 출시 전까지 사용자 데이터(설정·참여·의견)는 사전 고지 후 초기화·삭제될 수 있고, 보존·타 서비스 연동은 미지원.</li>
+      </ul>
+      <h3 class="sub">향후 과제</h3>
+      <ul>
+        <li>백엔드 연동 + KPI 이벤트 로깅(참여·필터 사용률·승격률).</li>
+        <li>권한·인증 서버 연동(비밀번호 해시 저장), 실제 QuizN 계정 SSO.</li>
+        <li>카테고리 확장·검색 고도화, 모바일 대응, 공지·배포 이력 실데이터화.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="sec" id="glossary">
+    <h2><span class="n">12</span> 용어 정리</h2>
+    <div class="card">
+      <table>
+        <thead><tr><th>현재 용어</th><th>이전/대응</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><strong>호응도</strong></td><td>평균 평점</td><td>모델 평균 별점(★ 표기 유지)</td></tr>
+          <tr><td><strong>의견</strong></td><td>피드백 · 댓글</td><td>회원이 남기는 의견(탭·통계 라벨 통일)</td></tr>
+          <tr><td><strong>참여</strong></td><td>(별점) 평가</td><td>별점 참여 행위·수 (예: N명 참여)</td></tr>
+          <tr><td><strong>내 참여</strong></td><td>내 평점</td><td>로그인 회원 본인이 매긴 별점</td></tr>
+          <tr><td><strong>보류</strong></td><td>(신규)</td><td>검토 대기·일시 중단(비활성·읽기 전용)</td></tr>
+          <tr><td><strong>최근 업데이트</strong></td><td>최신 수정순</td><td>정렬 기본값</td></tr>
+          <tr><td>회원</td><td>(과거: 선생님)</td><td>Labs 사용자 지칭</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section class="sec" id="ops">
+    <h2><span class="n">13</span> 운영 정책 상세</h2>
+    <div class="card">
+      <p class="lead">정책 검토 결과 확정·보류된 범위를 먼저 정리한다.</p>
+      <table>
+        <thead><tr><th>영역</th><th>결정</th></tr></thead>
+        <tbody>
+          <tr><td>인증·권한</td><td>현재 상단 권한 토글은 <strong>데모 확인용</strong>. 실서비스에서는 제외하거나 <strong>관리자 페이지 별도</strong> 운영 → 본 정책 대상 외.</td></tr>
+          <tr><td>개인정보</td><td><strong>소프트앤 산하 Labs</strong> vs <strong>퀴즈앤 Labs</strong> 소속 미정 → 개인정보·약관 정책 <strong>보류(TBD)</strong>.</td></tr>
+          <tr><td>이미지 업로드 · 입력 검증</td><td>일반 회원은 등록 불가, <strong>운영자만 등록</strong> → 검증·악용 위험 낮아 별도 정책 불필요.</td></tr>
+          <tr><td>투표</td><td><strong>기능 제거 결정.</strong> 상세 탭은 의견·공지·배포 이력만 유지.</td></tr>
+        </tbody>
+      </table>
+      <div class="warn">⚠ 투표 제거는 본 기획서에 반영했습니다. 실제 앱(<code>labs-detail</code> 투표 탭)과 Figma IA·와이어프레임에서도 제거가 필요합니다(후속 작업).</div>
+    </div>
+
+    <h3 class="sub">13-1. 모델 상태 운영 정책</h3>
+    <div class="card">
+      <p>상태 전이는 <strong>모두 운영자의 수동 변경</strong>(등록·수정 폼)이며 자동 전이는 없다. 허용 전이와 기록 규칙은 다음과 같다.</p>
+      <table>
+        <thead><tr><th>전이</th><th>트리거 / 조건</th><th>기록</th></tr></thead>
+        <tbody>
+          <tr><td>등록 → <span class="badge b-beta">베타</span></td><td>신규 등록 기본값</td><td>—</td></tr>
+          <tr><td><span class="badge b-beta">베타</span> → <span class="badge b-live">정식</span></td><td>승격 기준 충족 + 승인</td><td>승급 사유·승인자</td></tr>
+          <tr><td>베타·정식 → <span class="badge b-hold">보류</span></td><td>검토 대기·일시 중단</td><td><strong>보류 사유·재개 조건 필수</strong></td></tr>
+          <tr><td><span class="badge b-hold">보류</span> → 베타·정식</td><td>재개(조건 해소)</td><td>재개 사유</td></tr>
+          <tr><td>베타·정식·보류 → <span class="badge b-arch">보관</span></td><td>종료·신규 대체</td><td>종료 사유</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><strong>보류 vs 보관 운영 구분(정책 확정).</strong> 보류 = <em>재개 전제</em>의 일시 중단(사유·재개 조건 기록, 재개 시 이전 상태 복귀). 보관 = <em>종료 전제</em>(원칙적으로 재개하지 않음, 재오픈은 예외·사유 기록).</li>
+        <li><strong>승격 기준(베타→정식, 제안값).</strong> 예: 호응도 4.0↑ · 참여 N명↑ · 운영 기간 ○주↑ 중 정해진 임계 충족 + <strong>운영 책임자 승인</strong>. (수치는 운영팀 합의 후 확정.)</li>
+        <li><strong>전이 로그.</strong> 누가·언제·왜 상태를 바꿨는지 기록(정식 단계 서버). 데모 단계는 기록 생략.</li>
+        <li><strong>노출.</strong> 보류·보관은 목록 상태 필터에 노출하되 "진행 중" 카운트에서는 제외(현행 유지).</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">13-2. 참여 모더레이션 정책</h3>
+    <div class="card">
+      <p>참여 = <strong>의견(텍스트) · 별점</strong>. (투표는 제거.) 로그인 회원(member·staff)만 참여하며 비활성(보류·보관) 모델은 읽기 전용이다.</p>
+      <ul>
+        <li><strong>평점 무결성.</strong> 1인 1평점(내 참여), 본인 수정·삭제 가능. 중복·조작 방지는 정식 단계 <strong>서버에서 보장</strong>(현재 클라이언트 저장이라 미보장).</li>
+        <li><strong>의견 수정·삭제.</strong> 본인 의견만 수정·삭제(현행). 운영자에게 <strong>강제 숨김/삭제(모더레이션) 권한 신설</strong> — 스팸·욕설·부적절 콘텐츠 대응.</li>
+        <li><strong>신고.</strong> 회원이 의견을 신고 → 운영자 검토·조치하는 <strong>신고 기능 신설(제안)</strong>.</li>
+        <li><strong>금칙어·스팸 필터.</strong> 등록 시 자동 필터(정식 단계). 위반 시 등록 차단·검토 큐.</li>
+        <li><strong>보존·삭제 시 처리.</strong> 모델 보관 시 기존 의견은 읽기 전용 보존. 모델 <strong>삭제 시 누적 의견·평점 처리</strong>(완전 삭제 vs 익명 보존)는 운영 정책으로 확정 필요.</li>
+      </ul>
+      <div class="note">투표 제거에 따라 상세 탭 구성은 <strong>의견 · 공지 · 배포 이력</strong>으로 정리한다.</div>
+    </div>
+
+    <h3 class="sub">13-3. 지표 · 측정 규칙</h3>
+    <div class="card">
+      <p>측정은 정식 단계의 <strong>백엔드 이벤트 로깅</strong>을 전제로 한다(현재 미연동). 지표·산식·수집 이벤트를 명시한다.</p>
+      <table>
+        <thead><tr><th>지표</th><th>정의 / 산식</th><th>수집 이벤트 · 주기</th></tr></thead>
+        <tbody>
+          <tr><td>모델당 의견 수</td><td>기간 내 등록된 의견 합 / 모델</td><td>의견 등록 · 주</td></tr>
+          <tr><td>별점 참여자 수 · 참여율</td><td>고유 참여자 수, 참여자/열람자</td><td>별점 등록·상세 열람 · 주</td></tr>
+          <tr><td>평균 호응도</td><td>유효 별점 평균(1인 1회)</td><td>별점 등록 · 주</td></tr>
+          <tr><td>필터·검색 사용률</td><td>상태·카테고리 필터/검색 사용 세션 비율</td><td>필터·검색 클릭 · 주</td></tr>
+          <tr><td>베타→정식 승격 수·율</td><td>승격 모델 / 베타 모델</td><td>상태 전이 · 월</td></tr>
+          <tr><td>보류·보관 정리율</td><td>보류·보관 전이 모델 / 전체</td><td>상태 전이 · 월</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><strong>측정 규칙.</strong> 별점은 1인 1회로 중복 제거. "진행 중" 관련 지표는 비활성(보류·보관) 제외. 참여자는 로그인 식별 기준(익명 집계 금지).</li>
+        <li><strong>리포팅.</strong> 주간(참여·탐색)·월간(승격·정리) 단위. 책임=운영팀. 대시보드는 향후 과제.</li>
+      </ul>
+      <div class="warn">⚠ 위 임계값·주기는 <strong>제안값</strong>이다. 운영팀 합의로 확정 후 본 정책을 갱신한다.</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const secs=document.querySelectorAll('.sec');const links=document.querySelectorAll('.toc a');
+const ob=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));}});},{rootMargin:'-20% 0px -70% 0px'});
+secs.forEach(s=>ob.observe(s));
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}}));
+</script>
+</body>
+</html>
